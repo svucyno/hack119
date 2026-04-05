@@ -20,6 +20,7 @@
     <section id="view-hospital-dashboard" class="dashboard-section">
         <aside class="sidebar" id="hospitalSidebar">
             <div class="sidebar-header">
+
                 <h2>
                     <a href="index.html" style="text-decoration:none; color:inherit; cursor:pointer;" class="sidebar-logo">
                         <i class="fa-solid fa-heart-pulse logo-icon"></i>
@@ -41,6 +42,17 @@
                     <span class="nav-text">Doctor Availability</span>
                     <div class="nav-tooltip">Doctor Availability</div>
                 </li>
+
+                <h2><i class="fa-solid fa-hospital-user"></i> Hospital</h2>
+            </div>
+            <ul class="sidebar-nav">
+                <li class="active" onclick="app.switchHospitalTab('patients')"><i class="fa-solid fa-users"></i> View
+                    Patients</li>
+                <li onclick="app.switchHospitalTab('add')"><i class="fa-solid fa-user-plus"></i> Add Patient</li>
+                <li><i class="fa-solid fa-file-medical"></i> Reports</li>
+                <li><i class="fa-solid fa-prescription-bottle-medical"></i> Prescriptions</li>
+                <li><i class="fa-regular fa-calendar-check"></i> Appointments</li>
+
             </ul>
             <div class="sidebar-footer">
                 <button onclick="app.logout()">
@@ -53,7 +65,8 @@
             <header class="dash-header">
                 <h1>Hospital Dashboard</h1>
                 <div class="user-profile">
-                    <div class="avatar"><i class="fa-solid fa-user"></i></div>
+                    <span>Dr. Admin</span>
+                    <div class="avatar"><i class="fa-solid fa-user-doctor"></i></div>
                 </div>
             </header>
 
@@ -65,8 +78,22 @@
                             <h3>Registered Patients</h3>
                             <button class="btn-primary-sm" onclick="app.switchHospitalTab('add')">New Patient</button>
                         </div>
-                        <div class="patient-grid" id="patientCardsContainer">
-                            <!-- Populated via JS -->
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                        <th>Age/Gender</th>
+                                        <th>Latest Condition</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="patientTableBody">
+                                    <!-- Populated via JS -->
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -99,14 +126,6 @@
                                     <div class="input-group full-width">
                                         <label>Medical Details / Condition</label>
                                         <textarea id="apCondition" rows="3" required></textarea>
-                                    </div>
-                                    <div class="input-group full-width">
-                                        <label>Upload Reports</label>
-                                        <input type="file" id="apReports" accept=".pdf,.doc,.docx,.jpg,.png" style="font-family: 'Inter', sans-serif; cursor: pointer; padding-top: 0.6rem;">
-                                    </div>
-                                    <div class="input-group full-width">
-                                        <label>Prescription</label>
-                                        <textarea id="apPrescription" rows="3" placeholder="Enter prescription details..."></textarea>
                                     </div>
                                 </div>
                                 <div class="form-actions mt-2">
