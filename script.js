@@ -181,7 +181,10 @@ const app = {
                     actualRole = localStorage.getItem('nexus_pending_role') || 'patient';
                 }
 
+                let actualName = userData ? (userData.name || 'User') : (localStorage.getItem('nexus_pending_name') || 'User');
+
                 localStorage.setItem('nexus_user_role', actualRole);
+                localStorage.setItem('nexus_user_name', actualName);
                 if (userData && userData.patientId) {
                     localStorage.setItem('nexus_patient_id', userData.patientId);
                 }
@@ -263,6 +266,8 @@ const app = {
         const email = document.getElementById(emailId).value;
         const password = document.getElementById(passId).value;
 
+        localStorage.setItem('nexus_pending_name', name);
+
         try {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
@@ -343,6 +348,37 @@ const app = {
 
     getAuthRole: function() {
         return localStorage.getItem('nexus_user_role');
+    },
+
+    updateUserProfileUI: function() {
+        const userName = localStorage.getItem('nexus_user_name') || 'User';
+        const role = localStorage.getItem('nexus_user_role');
+        const patientId = localStorage.getItem('nexus_patient_id') || 'NEX-8241';
+        
+        // Extract initials (e.g. "John Doe" -> "JD")
+        const initials = userName.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase();
+        
+        if (role === 'patient') {
+            const firstName = userName.split(' ')[0];
+            const greeting = document.getElementById('patTopbarGreeting');
+            if (greeting) greeting.innerHTML = `Good morning, ${firstName} 👋`;
+            
+            const patName = document.getElementById('patSidebarName');
+            if (patName) patName.textContent = userName;
+            
+            const patRole = document.getElementById('patSidebarRole');
+            if (patRole) patRole.textContent = `Patient · ${patientId}`;
+            
+            const patSideAv = document.getElementById('patSidebarAvatar');
+            if (patSideAv) patSideAv.textContent = initials;
+            
+            const patTopAv = document.getElementById('patTopbarAvatar');
+            if (patTopAv) patTopAv.textContent = initials;
+            
+        } else if (role === 'hospital') {
+            const hospName = document.getElementById('hospUserName');
+            if (hospName) hospName.textContent = userName;
+        }
     },
 
     // --- HOSPITAL DASHBOARD ---
@@ -1417,10 +1453,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Initial render / setup
     if (document.getElementById('patientRecordsList')) {
+        app.updateUserProfileUI();
         await app.renderPatientRecords();
     }
 
     if (document.getElementById('sideNav') && window.location.pathname.includes('patient-dashboard.html')) {
+        app.updateUserProfileUI();
         await app.initPatientDashboard();
     }
     

@@ -6,13 +6,13 @@ import { getFirestore, collection, getDocs, doc, setDoc, getDoc, updateDoc, quer
 import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAKROA1gOoQa3Sb6-K8hfzZSZZmeDK2PXk",
-  authDomain: "healthnexus-e8a62.firebaseapp.com",
-  projectId: "healthnexus-e8a62",
-  storageBucket: "healthnexus-e8a62.firebasestorage.app",
-  messagingSenderId: "734401986104",
-  appId: "1:734401986104:web:4bb060925632ccb1e0b0cd",
-  measurementId: "G-93SLTPLK3X"
+  apiKey: window.ENV.FIREBASE_API_KEY,
+  authDomain: window.ENV.FIREBASE_AUTH_DOMAIN,
+  projectId: window.ENV.FIREBASE_PROJECT_ID,
+  storageBucket: window.ENV.FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: window.ENV.FIREBASE_MESSAGING_SENDER_ID,
+  appId: window.ENV.FIREBASE_APP_ID,
+  measurementId: window.ENV.FIREBASE_MEASUREMENT_ID
 };
 
 // Initialize Firebase

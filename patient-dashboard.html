@@ -405,6 +405,7 @@
       .g3  { grid-template-columns: 1fr; }
     }
   </style>
+  <script src="env.js"></script>
 </head>
 <body>
 
@@ -455,10 +456,10 @@
   <div class="sb-footer">
     <div class="sb-user">
       <div style="display:flex; align-items:center; gap:10px;">
-        <div class="sb-user-av">JD</div>
+        <div class="sb-user-av" id="patSidebarAvatar">JD</div>
         <div>
-          <div class="sb-user-name">John Doe</div>
-          <div class="sb-user-role">Patient · NEX-8241</div>
+          <div class="sb-user-name" id="patSidebarName">John Doe</div>
+          <div class="sb-user-role" id="patSidebarRole">Patient · NEX-8241</div>
         </div>
       </div>
       <div onclick="if(window.app && app.logout){app.logout();}else{window.location.href='index.html'}" class="tb-btn" title="Logout" style="margin-left:auto; color:var(--danger); border-color:transparent;">
@@ -474,7 +475,7 @@
   <!-- TOPBAR -->
   <header class="topbar">
     <div class="topbar-left">
-      <h1>Good morning, John 👋</h1>
+      <h1 id="patTopbarGreeting">Good morning, John 👋</h1>
       <p id="topDate">Loading...</p>
     </div>
     <div class="topbar-right">
@@ -486,7 +487,7 @@
       <div class="tb-btn" title="Logout" onclick="if(window.app && app.logout){app.logout();}else{window.location.href='index.html'}" style="color:var(--danger); border-color:rgba(255,77,109,0.3);">
         <i class="fa-solid fa-power-off"></i>
       </div>
-      <div class="tb-av">JD</div>
+      <div class="tb-av" id="patTopbarAvatar">JD</div>
     </div>
   </header>
 
