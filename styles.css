@@ -1409,3 +1409,72 @@ button {
     }
 }
 
+/* Patient Grid System */
+.patient-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+    padding: 1rem;
+}
+
+.pat-card {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius-md);
+    padding: 1.5rem;
+    transition: var(--transition);
+}
+
+.pat-card:hover {
+    background: rgba(255,255,255,0.05);
+    border-color: var(--accent-blue);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+.pat-card-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+}
+
+.pat-avatar {
+    width: 45px; height: 45px; border-radius: 50%;
+    background: #1E293B;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--accent-blue);
+    font-size: 1.2rem;
+}
+
+.pat-details {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--glass-border);
+}
+
+.pat-details p {
+    margin: 0.5rem 0;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+.pat-actions {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: center;
+}
+
+.pat-actions button {
+    width: 100%;
+}
+
+.pat-extended-details {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: rgba(0,0,0,0.2);
+    border-radius: var(--border-radius-sm);
+    border-left: 3px solid var(--accent-blue);
+    animation: fadeIn 0.3s ease-in-out;
+}
