@@ -1,82 +1,118 @@
 /**
  * HealthNexus - Main Application Logic
  */
+import { db, auth, collection, getDocs, doc, setDoc, getDoc, updateDoc, query, orderBy, signInWithEmailAndPassword, signOut, onAuthStateChanged, createUserWithEmailAndPassword } from './firebase-config.js';
 
 const app = {
     // --- STATE ---
-    getPatients: function() {
-        const stored = localStorage.getItem('nexus_patients');
-        if (stored) return JSON.parse(stored);
-        
-        // Default initial data for Demo
-        const defaults = [
-            { 
-                id: 'PT-001', name: 'Rahul Sharma', age: 45, gender: 'Male', 
-                condition: 'Diabetes Type 2', status: 'stable', 
-                lastVisit: '2026-04-02', nextAppt: '2026-04-10',
-                bloodGroup: 'O+', weight: '72kg', heartRate: '72 bpm',
-                phone: '+91 98765 43210',
-                address: 'Skyline Heights, Mumbai, MH',
-                disease_desc: 'Chronic metabolic disorder characterized by high blood sugar levels. Requires continuous monitoring and dietary control.',
-                past_history: [
-                    { date: '2026-03-20', event: 'Routine Checkup', result: 'HbA1c 6.8', status: 'stable' },
-                    { date: '2026-01-15', event: 'Emergency Check', result: 'Glucose 210 mg/dL', status: 'elevated' }
-                ],
-                medications: [
-                    { name: 'Metformin', dose: '500mg', courseUntil: '2026-05-10', frequency: 'Twice daily' },
-                    { name: 'Glipizide', dose: '5mg', courseUntil: '2026-04-25', frequency: 'Before breakfast' }
-                ]
-            },
-            { 
-                id: 'PT-002', name: 'Priya Patel', age: 32, gender: 'Female', 
-                condition: 'Hypertension', status: 'monitoring', 
-                lastVisit: '2026-03-28', nextAppt: '2026-04-08',
-                bloodGroup: 'A-', weight: '58kg', heartRate: '88 bpm',
-                phone: '+91 99887 76655',
-                address: 'Pune Hills Sector 4, Pune, MH',
-                disease_desc: 'Elevated blood pressure condition. Patient currently on ACE inhibitors. Regular monitoring advised.',
-                past_history: [
-                    { date: '2026-02-14', event: 'Initial Screen', result: 'BP 145/95', status: 'monitoring' },
-                    { date: '2025-12-01', event: 'General Health', result: 'All systems normal', status: 'stable' }
-                ],
-                medications: [
-                    { name: 'Lisinopril', dose: '10mg', courseUntil: 'Ongoing', frequency: 'Once daily' },
-                    { name: 'Amlodipine', dose: '5mg', courseUntil: '2026-04-20', frequency: 'At bedtime' }
-                ]
-            },
-            { 
-                id: 'PT-003', name: 'Amit Kumar', age: 58, gender: 'Male', 
-                condition: 'Cardiac Arrhythmia', status: 'critical', 
-                lastVisit: '2026-04-04', nextAppt: '2026-04-06',
-                bloodGroup: 'B+', weight: '84kg', heartRate: '102 bpm',
-                phone: '+91 88776 65544', email: 'amit.kumar@nexus.com',
-                address: 'Orchid Residency, Bangalore, KA',
-                disease_desc: 'Irregular heartbeat condition. Higher risk of stroke and heart failure. requires immediate medical attention.',
-                past_history: [
-                    { date: '2026-03-30', event: 'ECG Test', result: 'Atrial Fibrillation', status: 'critical' },
-                    { date: '2026-01-10', event: 'Holter Monit.', result: 'Occasional Skips', status: 'monitoring' }
-                ]
-            },
-            { 
-                id: 'PT-004', name: 'Sneha Reddy', age: 24, gender: 'Female', 
-                condition: 'Post-Surgery Recovery', status: 'stable', 
-                lastVisit: '2026-04-01', nextAppt: '2026-04-15',
-                bloodGroup: 'AB+', weight: '54kg', heartRate: '68 bpm',
-                phone: '+91 77665 54433', email: 'sneha.reddy@nexus.com',
-                address: 'Sector 23, Jubilee Hills, Hyderabad',
-                disease_desc: 'Patient recovering from appendectomy. No complications recorded. Wound healing proceeding as expected.',
-                past_history: [
-                    { date: '2026-03-25', event: 'Surgeons Followup', result: 'Healing Well', status: 'stable' },
-                    { date: '2026-03-20', event: 'Appendectomy', result: 'Surgery Successful', status: 'recovery' }
-                ]
+    // --- FIREBASE STATE ---
+    getPatients: async function() {
+        try {
+            const q = query(collection(db, "patients"), orderBy("id", "asc"));
+            const querySnapshot = await getDocs(q);
+            let patients = [];
+            querySnapshot.forEach((doc) => {
+                patients.push(doc.data());
+            });
+
+            if (patients.length > 0) return patients;
+
+            // Default initial data for Demo if Firestore is empty
+            const defaults = [
+                { 
+                    id: 'PT-001', name: 'Rahul Sharma', age: 45, gender: 'Male', 
+                    condition: 'Diabetes Type 2', status: 'stable', 
+                    lastVisit: '2026-04-02', nextAppt: '2026-04-10',
+                    bloodGroup: 'O+', weight: '72kg', heartRate: '72 bpm',
+                    phone: '+91 98765 43210',
+                    address: 'Skyline Heights, Mumbai, MH',
+                    disease_desc: 'Chronic metabolic disorder characterized by high blood sugar levels. Requires continuous monitoring and dietary control.',
+                    past_history: [
+                        { date: '2026-03-20', event: 'Routine Checkup', result: 'HbA1c 6.8', status: 'stable' },
+                        { date: '2026-01-15', event: 'Emergency Check', result: 'Glucose 210 mg/dL', status: 'elevated' }
+                    ],
+                    medications: [
+                        { name: 'Metformin', dose: '500mg', courseUntil: '2026-05-10', frequency: 'Twice daily' },
+                        { name: 'Glipizide', dose: '5mg', courseUntil: '2026-04-25', frequency: 'Before breakfast' }
+                    ]
+                },
+                { 
+                    id: 'PT-002', name: 'Priya Patel', age: 32, gender: 'Female', 
+                    condition: 'Hypertension', status: 'monitoring', 
+                    lastVisit: '2026-03-28', nextAppt: '2026-04-08',
+                    bloodGroup: 'A-', weight: '58kg', heartRate: '88 bpm',
+                    phone: '+91 99887 76655',
+                    address: 'Pune Hills Sector 4, Pune, MH',
+                    disease_desc: 'Elevated blood pressure condition. Patient currently on ACE inhibitors. Regular monitoring advised.',
+                    past_history: [
+                        { date: '2026-02-14', event: 'Initial Screen', result: 'BP 145/95', status: 'monitoring' },
+                        { date: '2025-12-01', event: 'General Health', result: 'All systems normal', status: 'stable' }
+                    ],
+                    medications: [
+                        { name: 'Lisinopril', dose: '10mg', courseUntil: 'Ongoing', frequency: 'Once daily' },
+                        { name: 'Amlodipine', dose: '5mg', courseUntil: '2026-04-20', frequency: 'At bedtime' }
+                    ]
+                },
+                { 
+                    id: 'PT-003', name: 'Amit Kumar', age: 58, gender: 'Male', 
+                    condition: 'Cardiac Arrhythmia', status: 'critical', 
+                    lastVisit: '2026-04-04', nextAppt: '2026-04-06',
+                    bloodGroup: 'B+', weight: '84kg', heartRate: '102 bpm',
+                    phone: '+91 88776 65544', email: 'amit.kumar@nexus.com',
+                    address: 'Orchid Residency, Bangalore, KA',
+                    disease_desc: 'Irregular heartbeat condition. Higher risk of stroke and heart failure. requires immediate medical attention.',
+                    past_history: [
+                        { date: '2026-03-30', event: 'ECG Test', result: 'Atrial Fibrillation', status: 'critical' },
+                        { date: '2026-01-10', event: 'Holter Monit.', result: 'Occasional Skips', status: 'monitoring' }
+                    ]
+                },
+                { 
+                    id: 'PT-004', name: 'Sneha Reddy', age: 24, gender: 'Female', 
+                    condition: 'Post-Surgery Recovery', status: 'stable', 
+                    lastVisit: '2026-04-01', nextAppt: '2026-04-15',
+                    bloodGroup: 'AB+', weight: '54kg', heartRate: '68 bpm',
+                    phone: '+91 77665 54433', email: 'sneha.reddy@nexus.com',
+                    address: 'Sector 23, Jubilee Hills, Hyderabad',
+                    disease_desc: 'Patient recovering from appendectomy. No complications recorded. Wound healing proceeding as expected.',
+                    past_history: [
+                        { date: '2026-03-25', event: 'Surgeons Followup', result: 'Healing Well', status: 'stable' },
+                        { date: '2026-03-20', event: 'Appendectomy', result: 'Surgery Successful', status: 'recovery' }
+                    ]
+                }
+            ];
+            
+            // Seed Firestore
+            for (const p of defaults) {
+                await setDoc(doc(db, "patients", p.id), p);
             }
-        ];
-        localStorage.setItem('nexus_patients', JSON.stringify(defaults));
-        return defaults;
+            return defaults;
+        } catch (e) {
+            console.error("Firebase fetch error: ", e);
+            return [];
+        }
     },
     
-    savePatients: function(patients) {
-        localStorage.setItem('nexus_patients', JSON.stringify(patients));
+    savePatients: async function(patients) {
+        // Individual save handled by specific methods (addPatient/updateMedicine)
+        // This is kept for compatibility but logic is decentralised for Firebase
+    },
+    
+    savePatient: async function(patient) {
+        try {
+            await setDoc(doc(db, "patients", patient.id), patient);
+        } catch (e) {
+            console.error("Error saving patient: ", e);
+        }
+    },
+
+    getPatientById: async function(id) {
+        try {
+            const patients = await this.getPatients();
+            return patients.find(p => p.id === id) || null;
+        } catch (e) {
+            console.error("Error fetching patient: ", e);
+            return null;
+        }
     },
     
     // --- NAVIGATION LOGIC ---
@@ -112,41 +148,197 @@ const app = {
         }
     },
 
+    currentAuthRole: 'hospital',
+    currentAuthMode: 'login',
+
     // --- LOGIN LOGIC ---
     switchLogin: function(type) {
+        this.currentAuthRole = type;
+        
         // Update Buttons
         document.getElementById('btnSwitchHospital').classList.remove('active');
         document.getElementById('btnSwitchPatient').classList.remove('active');
         
-        // Hide forms
-        document.getElementById('formHospitalLogin').classList.add('hidden');
-        document.getElementById('formPatientLogin').classList.add('hidden');
-
-        if(type === 'hospital') {
+        if (type === 'hospital') {
             document.getElementById('btnSwitchHospital').classList.add('active');
-            document.getElementById('formHospitalLogin').classList.remove('hidden');
         } else {
             document.getElementById('btnSwitchPatient').classList.add('active');
-            document.getElementById('formPatientLogin').classList.remove('hidden');
         }
-    },
-
-    login: function(role) {
-        // Save auth state
-        localStorage.setItem('nexus_user_role', role);
         
-        if(role === 'hospital') {
-            this.navigate('hospital-dashboard');
-            if (typeof this.renderPatients === 'function') this.renderPatients();
-        } else if (role === 'patient') {
-            this.navigate('patient-dashboard');
+        this.switchAuthMode(this.currentAuthMode); // re-apply current login/signup mode for new role
+    },
+
+    // --- AUTH LOGIC (REAL FIREBASE) ---
+    initAuthListener: function() {
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                // User is signed in
+                const userData = await this.getUserData(user.uid);
+                let actualRole = userData ? userData.role : null;
+                
+                // Fallback for race conditions or missing Firestore documents
+                if (!actualRole) {
+                    actualRole = localStorage.getItem('nexus_pending_role') || 'patient';
+                }
+
+                localStorage.setItem('nexus_user_role', actualRole);
+                if (userData && userData.patientId) {
+                    localStorage.setItem('nexus_patient_id', userData.patientId);
+                }
+                
+                // Refresh UI
+                if (typeof components !== 'undefined') components.renderNavbar();
+                
+                // Route protection: if on login page, go to dashboard
+                if (window.location.pathname.includes('login.html')) {
+                    localStorage.removeItem('nexus_pending_role'); // Clean up pending role
+                    this.navigate(actualRole === 'hospital' ? 'hospital-dashboard' : 'patient-dashboard');
+                }
+            } else {
+                // User is signed out
+                localStorage.removeItem('nexus_user_role');
+                localStorage.removeItem('nexus_patient_id');
+                
+                // Refresh UI
+                if (typeof components !== 'undefined') components.renderNavbar();
+
+                // Route protection: if on dashboard, go to home
+                if (window.location.pathname.includes('dashboard.html')) {
+                    this.navigate('login');
+                }
+            }
+        });
+    },
+
+    getUserData: async function(uid) {
+        try {
+            const userDoc = await getDoc(doc(db, "users", uid));
+            if (userDoc.exists()) {
+                return userDoc.data();
+            } else {
+                return null; // Return null so we can check pending_role
+            }
+        } catch (e) {
+            console.error("Error fetching user data:", e);
+            return null;
         }
     },
 
-    logout: function() {
-        // Clear auth state
-        localStorage.removeItem('nexus_user_role');
-        this.navigate('home');
+    login: async function(role) {
+        localStorage.setItem('nexus_pending_role', role); // Store intended role for missing documents
+        
+        const emailId = role === 'hospital' ? 'hospEmail' : 'patEmail';
+        const passId = role === 'hospital' ? 'hospPass' : 'patPass';
+        
+        const email = document.getElementById(emailId).value;
+        const password = document.getElementById(passId).value;
+
+        try {
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            console.log("Logged in as:", userCredential.user.email);
+            // Redirection happens in initAuthListener
+        } catch (error) {
+            console.error("Login failed:", error.code, error.message);
+            alert("Login Failed: " + error.message);
+        }
+    },
+
+    logout: async function() {
+        try {
+            await signOut(auth);
+            this.navigate('home');
+        } catch (error) {
+            console.error("Logout failed:", error);
+        }
+    },
+
+    signUp: async function(role) {
+        localStorage.setItem('nexus_pending_role', role); // Store intended role for race condition
+        
+        const nameId = role === 'hospital' ? 'regHospName' : 'regName';
+        const emailId = role === 'hospital' ? 'regHospEmail' : 'regEmail';
+        const passId = role === 'hospital' ? 'regHospPass' : 'regPass';
+        
+        const name = document.getElementById(nameId).value;
+        const email = document.getElementById(emailId).value;
+        const password = document.getElementById(passId).value;
+
+        try {
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+            
+            if (role === 'patient') {
+                // 1. Create Patient Record
+                const patientId = `PT-${new Date().getTime().toString().slice(-4)}`;
+                const newPatient = {
+                    id: patientId,
+                    name: name,
+                    email: email,
+                    age: 25, // Default
+                    gender: 'TBD',
+                    condition: 'General Wellness',
+                    status: 'stable',
+                    lastVisit: new Date().toISOString().split('T')[0],
+                    vitals: { bp: { sys: 120, dia: 80 }, sugar: { val: 100 }, hemo: { val: 14 } }
+                };
+                
+                await setDoc(doc(db, "patients", patientId), newPatient);
+                
+                // 2. Create User Map record
+                await setDoc(doc(db, "users", user.uid), {
+                    role: 'patient',
+                    patientId: patientId,
+                    email: email,
+                    name: name
+                });
+            } else if (role === 'hospital') {
+                // Create User Map record for Hospital
+                await setDoc(doc(db, "users", user.uid), {
+                    role: 'hospital',
+                    email: email,
+                    name: name
+                });
+            }
+
+            console.log("Registered and mapped successfully");
+            // Redirection happens in initAuthListener
+        } catch (error) {
+            console.error("Registration failed:", error);
+            alert("Registration Failed: " + error.message);
+        }
+    },
+
+    switchAuthMode: function(mode) {
+        this.currentAuthMode = mode;
+        
+        const loginBtn = document.getElementById('btnModeLogin');
+        const signupBtn = document.getElementById('btnModeSignup');
+        
+        // Hide all forms first
+        document.getElementById('formPatientLogin')?.classList.add('hidden');
+        document.getElementById('formPatientSignup')?.classList.add('hidden');
+        document.getElementById('formHospitalLogin')?.classList.add('hidden');
+        document.getElementById('formHospitalSignup')?.classList.add('hidden');
+
+        // Reset buttons
+        if (loginBtn) loginBtn.classList.remove('active');
+        if (signupBtn) signupBtn.classList.remove('active');
+
+        if (mode === 'signup') {
+            if (signupBtn) signupBtn.classList.add('active');
+            if (this.currentAuthRole === 'hospital') {
+                document.getElementById('formHospitalSignup')?.classList.remove('hidden');
+            } else {
+                document.getElementById('formPatientSignup')?.classList.remove('hidden');
+            }
+        } else {
+            if (loginBtn) loginBtn.classList.add('active');
+            if (this.currentAuthRole === 'hospital') {
+                document.getElementById('formHospitalLogin')?.classList.remove('hidden');
+            } else {
+                document.getElementById('formPatientLogin')?.classList.remove('hidden');
+            }
+        }
     },
 
     getAuthRole: function() {
@@ -317,11 +509,11 @@ const app = {
     },
 
 
-    renderPatientRecords: function(filterTerm = '') {
+    renderPatientRecords: async function(filterTerm = '') {
         const listContainer = document.getElementById('patientRecordsList');
         if (!listContainer) return;
         
-        const patients = this.getPatients();
+        const patients = await this.getPatients();
         const filtered = patients.filter(p => 
             p.name.toLowerCase().includes(filterTerm.toLowerCase()) || 
             p.id.toLowerCase().includes(filterTerm.toLowerCase())
@@ -374,7 +566,7 @@ const app = {
         }
     },
 
-    selectPatient: function(id) {
+    selectPatient: async function(id) {
         this.selectedPatientId = id;
         
         // Update active class in list
@@ -384,7 +576,8 @@ const app = {
         const activeCard = Array.from(document.querySelectorAll('.patient-record-card')).find(c => c.innerHTML.includes(id));
         if (activeCard) activeCard.classList.add('active');
 
-        const patient = this.getPatients().find(p => p.id === id);
+        const patients = await this.getPatients();
+        const patient = patients.find(p => p.id === id);
         const detailPanel = document.getElementById('patientDetailPanel');
         if (!detailPanel || !patient) return;
 
@@ -454,8 +647,10 @@ const app = {
         this.renderPatientRecords(query);
     },
 
-    openFullDossier: function(id) {
-        const patient = this.getPatients().find(p => p.id === id);
+    openFullDossier: async function(id) {
+        this._activePatientId = id;
+        const patients = await this.getPatients();
+        const patient = patients.find(p => p.id === id);
         if (!patient) return;
 
         const overlay = document.getElementById('fullDossierOverlay');
@@ -634,16 +829,16 @@ const app = {
     },
 
     // --- 1. ADD MEDICAL REPORT (File Upload) ---
-    triggerReportUpload: function(patientId) {
+    triggerReportUpload: async function(patientId) {
         const fileInput = document.createElement('input');
         fileInput.type = 'file';
         fileInput.accept = '.pdf,.doc,.docx';
         fileInput.style.display = 'none';
-        fileInput.addEventListener('change', (e) => {
+        fileInput.addEventListener('change', async (e) => {
             const file = e.target.files[0];
             if (file) {
                 // Store report reference in patient data
-                const patients = this.getPatients();
+                const patients = await this.getPatients();
                 const patient = patients.find(p => p.id === patientId);
                 if (patient) {
                     if (!patient.reports) patient.reports = [];
@@ -653,7 +848,7 @@ const app = {
                         date: new Date().toISOString().split('T')[0],
                         type: file.name.split('.').pop().toUpperCase()
                     });
-                    this.savePatients(patients);
+                    await this.savePatient(patient);
                     this.selectPatient(patientId);
                 }
                 this.showToast(`Report "${file.name}" attached successfully`, 'success');
@@ -704,14 +899,14 @@ const app = {
         `);
     },
 
-    submitMedicineUpdate: function() {
+    submitMedicineUpdate: async function() {
         const name = document.getElementById('medName').value;
         const dose = document.getElementById('medDose').value;
         const freq = document.getElementById('medFreq').value;
         const courseEnd = document.getElementById('medCourseEnd').value;
         if (!name || !dose || !courseEnd) return;
 
-        const patients = this.getPatients();
+        const patients = await this.getPatients();
         const patient = patients.find(p => p.id === this._activePatientId);
         if (!patient) return;
 
@@ -723,16 +918,17 @@ const app = {
             courseUntil: courseEnd
         });
 
-        this.savePatients(patients);
+        await this.savePatient(patient);
         this.closeActionModal();
         this.selectPatient(this._activePatientId);
         this.showToast(`${name} ${dose} added to prescription`, 'success');
     },
 
     // --- 3. SCHEDULE FOLLOW-UP (Date Picker Modal) ---
-    openFollowupModal: function(patientId) {
+    openFollowupModal: async function(patientId) {
         this._activePatientId = patientId;
-        const patient = this.getPatients().find(p => p.id === patientId);
+        const patients = await this.getPatients();
+        const patient = patients.find(p => p.id === patientId);
         const currentAppt = patient?.nextAppt || '';
 
         this.openActionModal(`
@@ -760,22 +956,22 @@ const app = {
         `);
     },
 
-    submitFollowupUpdate: function() {
+    submitFollowupUpdate: async function() {
         const date = document.getElementById('followupDate').value;
         if (!date) return;
 
-        const patients = this.getPatients();
+        const patients = await this.getPatients();
         const patient = patients.find(p => p.id === this._activePatientId);
         if (!patient) return;
 
         patient.nextAppt = date;
-        this.savePatients(patients);
+        await this.savePatient(patient);
         this.closeActionModal();
         this.selectPatient(this._activePatientId);
         this.showToast(`Follow-up scheduled for ${date}`, 'success');
     },
 
-    addPatient: function() {
+    addPatient: async function() {
         const name = document.getElementById('apName').value;
         const age = document.getElementById('apAge').value;
         const gender = document.getElementById('apGender').value;
@@ -793,8 +989,6 @@ const app = {
             return;
         }
 
-        const patients = this.getPatients();
-        
         // Mandatory Unique ID Generation (Format: PT-YYYYMMDD-XXXX)
         const now = new Date();
         const dateStr = now.toISOString().slice(0, 10).replace(/-/g, '');
@@ -827,8 +1021,7 @@ const app = {
             ]
         };
 
-        patients.unshift(newPatient); // Add to top
-        this.savePatients(patients);
+        await this.savePatient(newPatient);
         
         this.showToast(`Patient ${name} registered successfully with ID ${newId}`, 'success');
         
@@ -839,7 +1032,7 @@ const app = {
         
         // Switch back to patients tab and select the new patient
         this.selectedPatientId = newId; 
-        this.renderPatientRecords(); // This will render the list and auto-select the current selectedPatientId
+        await this.renderPatientRecords(); // This will render the list and auto-select the current selectedPatientId
         this.switchHospitalTab(null, 'patients');
         
         // Trigger selectPatient to show details immediately
@@ -1143,12 +1336,78 @@ const app = {
             display.textContent = 'No file selected';
             display.style.color = 'var(--text-secondary)';
         }
+    },
+
+    // --- PATIENT DASHBOARD DYNAMIC LOGIC ---
+    initPatientDashboard: async function() {
+        const patientId = localStorage.getItem('nexus_patient_id');
+        if (!patientId) {
+            console.error("No patient ID found in session.");
+            return;
+        }
+
+        const patient = await this.getPatientById(patientId);
+        if (!patient) {
+            console.error("Patient record not found in Firestore.");
+            return;
+        }
+
+        // 1. Update Identity & Morning Greeting
+        const welcomeEl = document.querySelector('.topbar-left h1');
+        if (welcomeEl) welcomeEl.innerHTML = `Good morning, ${patient.name.split(' ')[0]} 👋`;
+        
+        const sbName = document.querySelector('.sb-user-name');
+        if (sbName) sbName.textContent = patient.name;
+        
+        const sbRole = document.querySelector('.sb-user-role');
+        if (sbRole) sbRole.textContent = `Patient · ${patient.id.split('-').pop()}`;
+        
+        const avatarEls = document.querySelectorAll('.sb-user-av, .tb-av');
+        const initials = patient.name.split(' ').map(n => n[0]).join('').toUpperCase();
+        avatarEls.forEach(el => el.textContent = initials);
+
+        // 2. Update Stats (Assuming data exists or using defaults)
+        // For the demo, we map patient fields to the dashboard vitals
+        const vitals = {
+            bp: patient.bp || { sys: 120, dia: 80 },
+            sugar: patient.sugar || { val: 108 },
+            hemo: patient.hemo || { val: 13.8 }
+        };
+
+        const bpVal = document.querySelector('.stat-card:nth-child(1) .stat-val');
+        if (bpVal) bpVal.innerHTML = `${vitals.bp.sys}<span class="stat-unit">/${vitals.bp.dia} mmHg</span>`;
+        
+        const sugarVal = document.querySelector('.stat-card:nth-child(2) .stat-val');
+        if (sugarVal) sugarVal.innerHTML = `${vitals.sugar.val}<span class="stat-unit">mg/dL</span>`;
+        
+        const hemoVal = document.querySelector('.stat-card:nth-child(3) .stat-val');
+        if (hemoVal) hemoVal.innerHTML = `${vitals.hemo.val}<span class="stat-unit">g/dL</span>`;
+
+        // 3. Update Health Story Narrative
+        const storyText = document.querySelector('.story-text');
+        if (storyText) {
+            const risk = (patient.status || 'stable').toLowerCase() === 'stable' ? 'Low-Risk' : 'Monitoring required';
+            storyText.innerHTML = `
+                Over the past 30 days, ${patient.name.split(' ')[0]}'s health profile has been evaluated.
+                Current diagnosis: <mark>${patient.condition}</mark>. 
+                Latest BP is <mark>${vitals.bp.sys}/${vitals.bp.dia} mmHg</mark>.
+                Next clinical milestone is scheduled for <mark>${patient.nextAppt || 'TBD'}</mark>.
+                Overall status remains <mark>${patient.status || 'Stable'}</mark>.
+            `;
+        }
+
+        // 4. Update Prescription highlights
+        const medSummary = document.querySelector('.card:has(.fa-pills) .card-head + div'); // Adjust selector as needed
+        // Assuming there's a meds section we want to update
     }
 };
 
 
 // Initialize app when DOM loads
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    // 0. Start Auth listener
+    app.initAuthListener();
+
     // Check for login type in URL (for login.html)
     if (window.location.pathname.includes('login.html')) {
         const params = new URLSearchParams(window.location.search);
@@ -1158,7 +1417,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initial render / setup
     if (document.getElementById('patientRecordsList')) {
-        app.renderPatientRecords();
+        await app.renderPatientRecords();
+    }
+
+    if (document.getElementById('sideNav') && window.location.pathname.includes('patient-dashboard.html')) {
+        await app.initPatientDashboard();
     }
     
     app.initAnimations();
@@ -1166,3 +1429,5 @@ document.addEventListener('DOMContentLoaded', () => {
     app.initSpotlight();
 });
 
+// Expose app to global window for HTML event handlers
+window.app = app;

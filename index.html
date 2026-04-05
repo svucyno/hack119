@@ -200,12 +200,11 @@
     <!-- Scripts -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="components.js"></script>
-    <script src="script.js"></script>
+    <script type="module" src="script.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             components.renderNavbar('home');
             components.renderFooter();
-            app.initAnimations();
             
             // Dynamic Auth UI for Hero/Portal
             const role = localStorage.getItem('nexus_user_role');

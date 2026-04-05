@@ -454,10 +454,15 @@
 
   <div class="sb-footer">
     <div class="sb-user">
-      <div class="sb-user-av">JD</div>
-      <div>
-        <div class="sb-user-name">John Doe</div>
-        <div class="sb-user-role">Patient · NEX-8241</div>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div class="sb-user-av">JD</div>
+        <div>
+          <div class="sb-user-name">John Doe</div>
+          <div class="sb-user-role">Patient · NEX-8241</div>
+        </div>
+      </div>
+      <div onclick="if(window.app && app.logout){app.logout();}else{window.location.href='index.html'}" class="tb-btn" title="Logout" style="margin-left:auto; color:var(--danger); border-color:transparent;">
+        <i class="fa-solid fa-power-off"></i>
       </div>
     </div>
   </div>
@@ -478,6 +483,9 @@
         <div class="tb-badge">2</div>
       </div>
       <div class="tb-btn" title="Search"><i class="fa-solid fa-magnifying-glass"></i></div>
+      <div class="tb-btn" title="Logout" onclick="if(window.app && app.logout){app.logout();}else{window.location.href='index.html'}" style="color:var(--danger); border-color:rgba(255,77,109,0.3);">
+        <i class="fa-solid fa-power-off"></i>
+      </div>
       <div class="tb-av">JD</div>
     </div>
   </header>
@@ -762,167 +770,85 @@
 
 <div id="toast"></div>
 
-<!-- ═══════════════ SCRIPTS ═══════════════ -->
-<script>
+<!-- Scripts -->
+<script src="components.js"></script>
+<script type="module" src="script.js"></script>
+<script type="module">
+  import { app } from './script.js';
+
+  // Make globals for legacy inline onclicks in this page if any
+  window.openSOS = () => document.getElementById('sosModal').classList.add('open');
+  window.closeSOS = () => document.getElementById('sosModal').classList.remove('remove');
+  window.confirmSOS = () => { window.closeSOS(); app.showToast('🚨 Emergency services notified!', 'success'); };
+  
   /* ── Date ─────────────────────────────── */
-  document.getElementById('topDate').textContent =
-    new Date().toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
-  document.getElementById('scoreDay').textContent =
-    new Date().toLocaleDateString('en-US', { month:'short', day:'numeric' });
-
-  /* ── Health Score Calculation ─────────────────────────────
-     Only 3 metrics: BP, Blood Sugar, Hemoglobin
-     Each max = 34 pts (total ≈ 100, rounding gives 78)
-
-     BP      120/80 → normal → 34/34 pts
-     Sugar   108    → borderline (100-125 = 65%) → 22/34 pts
-     Hemo    13.8   → healthy → 30/34 pts
-     Total = 86 → normalized to 78 (moderate clamp for realism)
-  ─────────────────────────────────────────────────── */
-  const vitals = {
-    bp:    { sys: 120, dia: 80  },   // mmHg
-    sugar: { val: 108 },              // mg/dL fasting
-    hemo:  { val: 13.8 }             // g/dL
+  const updateDates = () => {
+    const topDate = document.getElementById('topDate');
+    const scoreDay = document.getElementById('scoreDay');
+    if (topDate) topDate.textContent = new Date().toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+    if (scoreDay) scoreDay.textContent = new Date().toLocaleDateString('en-US', { month:'short', day:'numeric' });
   };
 
-  /* Individual sub-scores (out of 100 each) */
-  function bpScore(s, d) {
-    if (s <= 120 && d <= 80)   return 100;
-    if (s <= 130 && d <= 80)   return 75;
-    if (s <= 140 || d <= 90)   return 50;
-    return 25;
-  }
-  function sugarScore(v) {
-    if (v < 100)  return 100;
-    if (v < 126)  return 65;   // pre-diabetic
-    return 30;                 // diabetic range
-  }
-  function hemoScore(v) {
-    // Male ref 13.5–17.5
-    if (v >= 13.5 && v <= 17.5) return 100;
-    if (v >= 12.0 && v < 13.5)  return 60;
-    return 30;
-  }
-
-  const bpS  = bpScore(vitals.bp.sys, vitals.bp.dia);
-  const sgS  = sugarScore(vitals.sugar.val);
-  const hbS  = hemoScore(vitals.hemo.val);
-  const SCORE = Math.round((bpS + sgS + hbS) / 3);
-
-  /* ── Animate ring ─────────────────────── */
-  const circumf = 2 * Math.PI * 65; // r=65
-  const ring    = document.getElementById('ringFill');
-  const numEl   = document.getElementById('scoreNum');
-  ring.style.strokeDasharray  = circumf;
-  ring.style.strokeDashoffset = circumf;
-
-  setTimeout(() => {
-    ring.style.strokeDashoffset = circumf - (SCORE / 100) * circumf;
-  }, 150);
-  let n = 0;
-  const counter = setInterval(() => {
-    n = Math.min(n + 2, SCORE);
-    numEl.textContent = n;
-    if (n >= SCORE) clearInterval(counter);
-  }, 22);
-
-  /* ── Risk Pill ────────────────────────── */
-  const pill  = document.getElementById('riskPill');
-  const label = document.getElementById('riskLabel');
-  if (SCORE >= 80)      { pill.className = 'risk-pill pill-low';  label.textContent = 'Low Risk'; }
-  else if (SCORE >= 60) { pill.className = 'risk-pill pill-mod';  label.textContent = 'Moderate Risk'; }
-  else                  { pill.className = 'risk-pill pill-high'; label.textContent = 'High Risk'; }
-
-  /* ── Breakdown bars ───────────────────── */
-  setTimeout(() => {
-    document.getElementById('bp-bar').style.width = bpS + '%';
-    document.getElementById('sg-bar').style.width = sgS + '%';
-    document.getElementById('hb-bar').style.width = hbS + '%';
-    document.getElementById('bp-sc').textContent = bpS;
-    document.getElementById('sg-sc').textContent = sgS;
-    document.getElementById('hb-sc').textContent = hbS;
-  }, 400);
-
-  /* ── Sidebar nav ──────────────────────── */
-  document.querySelectorAll('#sideNav li').forEach(li => {
-    li.addEventListener('click', () => {
-      document.querySelectorAll('#sideNav li').forEach(x => x.classList.remove('active'));
-      li.classList.add('active');
-    });
-  });
-
-  /* ── Chart.js (BP / Sugar / Hemoglobin only) ── */
+  /* ── Chart.js Setup ────────────────────────── */
+  let chart = null;
+  const ctxEl = document.getElementById('vitalChart')?.getContext('2d');
   const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-  const chartData = {
+  const chartDataDefaults = {
     bp:    { label:'Systolic BP (mmHg)', data:[118,122,119,125,121,118,120], color:'#6c63ff' },
     sugar: { label:'Blood Sugar (mg/dL)', data:[99,104,108,148,112,106,108],  color:'#f59e0b' },
     hemo:  { label:'Hemoglobin (g/dL)',   data:[13.6,13.8,13.7,13.9,13.8,13.7,13.8], color:'#00d4aa' },
   };
-  const ctxEl = document.getElementById('vitalChart').getContext('2d');
-  let chart = null;
 
-  function buildChart(key) {
+  window.buildChart = (key) => {
+    if (!ctxEl) return;
     if (chart) chart.destroy();
-    const d = chartData[key];
+    const d = chartDataDefaults[key];
     chart = new Chart(ctxEl, {
       type: 'line',
       data: {
         labels: days,
         datasets: [{
           label: d.label, data: d.data,
-          borderColor: d.color,
-          backgroundColor: d.color + '18',
-          pointBackgroundColor: d.color,
-          pointBorderColor: '#0b0f1a',
-          pointBorderWidth: 2,
-          pointRadius: 5,
-          tension: 0.38, fill: true,
+          borderColor: d.color, backgroundColor: d.color + '18',
+          pointBackgroundColor: d.color, pointBorderColor: '#0b0f1a',
+          pointBorderWidth: 2, pointRadius: 5, tension: 0.38, fill: true,
         }]
       },
       options: {
         responsive: true, animation: { duration: 600 },
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            backgroundColor: '#1a2235',
-            borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1,
-            titleColor: '#e2e8f0', bodyColor: '#94a3b8', padding: 10,
-          }
-        },
+        plugins: { legend: { display: false } },
         scales: {
-          x: { grid: { color:'rgba(255,255,255,0.04)' }, ticks: { color:'#64748b', font:{ size:11 } } },
-          y: { grid: { color:'rgba(255,255,255,0.04)' }, ticks: { color:'#64748b', font:{ size:11 } } }
+          x: { grid: { color:'rgba(255,255,255,0.04)' }, ticks: { color:'#64748b' } },
+          y: { grid: { color:'rgba(255,255,255,0.04)' }, ticks: { color:'#64748b' } }
         }
       }
     });
-  }
-  buildChart('bp');
+  };
 
-  function switchChart(key, btn) {
+  window.switchChart = (key, btn) => {
     document.querySelectorAll('.gtab').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    buildChart(key);
-  }
+    window.buildChart(key);
+  };
 
-  /* ── SOS Modal ────────────────────────── */
-  function openSOS()    { document.getElementById('sosModal').classList.add('open'); }
-  function closeSOS()   { document.getElementById('sosModal').classList.remove('open'); }
-  function confirmSOS() { closeSOS(); toast('🚨 Emergency services notified! Help is on the way.'); }
-  document.getElementById('sosModal').addEventListener('click', e => {
-    if (e.target === document.getElementById('sosModal')) closeSOS();
+  /* ── Initialization ────────────────────────── */
+  document.addEventListener('DOMContentLoaded', async () => {
+    updateDates();
+    window.buildChart('bp');
+    
+    // Ensure navbar and footer are rendered
+    if (typeof components !== 'undefined') {
+        components.renderNavbar('dashboard');
+    }
+
+    // Modal click-to-close
+    const sosModal = document.getElementById('sosModal');
+    if (sosModal) {
+        sosModal.addEventListener('click', e => {
+            if (e.target === sosModal) sosModal.classList.remove('open');
+        });
+    }
   });
-
-  /* ── Toast ────────────────────────────── */
-  let toastTimer;
-  function toast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.style.transform = 'translateY(0)'; t.style.opacity = '1';
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => {
-      t.style.transform = 'translateY(80px)'; t.style.opacity = '0';
-    }, 3000);
-  }
 </script>
 </body>
 </html>
