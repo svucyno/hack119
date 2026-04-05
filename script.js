@@ -146,12 +146,6 @@ const app = {
         const age = document.getElementById('apAge').value;
         const gender = document.getElementById('apGender').value;
         const condition = document.getElementById('apCondition').value;
-        const prescription = document.getElementById('apPrescription').value;
-        const reportsInput = document.getElementById('apReports');
-        let reportsCount = 0;
-        if (reportsInput && reportsInput.files) {
-            reportsCount = reportsInput.files.length;
-        }
         
         // simple validation
         if(!name || !age || !condition) return;
@@ -165,8 +159,6 @@ const app = {
             age: age,
             gender: gender,
             condition: condition,
-            prescription: prescription,
-            reportsAttached: reportsCount,
             status: 'Stable' // default
         });
 
