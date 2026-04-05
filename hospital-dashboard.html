@@ -15,21 +15,21 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body class="dashboard-body">
-    <div id="navbar-placeholder"></div>
+
 
     <section id="view-hospital-dashboard" class="dashboard-section">
         <aside class="sidebar" id="hospitalSidebar">
             <div class="sidebar-header">
 
+                <button class="sidebar-toggle" onclick="app.toggleSidebar()" title="Toggle Sidebar">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
                 <h2>
                     <a href="index.html" style="text-decoration:none; color:inherit; cursor:pointer;" class="sidebar-logo">
                         <i class="fa-solid fa-heart-pulse logo-icon"></i>
                         <span class="nav-text logo-text">HealthNexus</span>
                     </a>
                 </h2>
-                <button class="sidebar-toggle" onclick="app.toggleSidebar()" title="Toggle Sidebar">
-                    <i class="fa-solid fa-chevron-left"></i>
-                </button>
             </div>
             <ul class="sidebar-nav">
                 <li class="active" onclick="app.switchHospitalTab('patients')">
@@ -37,22 +37,16 @@
                     <span class="nav-text">View Patients</span>
                     <div class="nav-tooltip">View Patients</div>
                 </li>
+                <li onclick="app.switchHospitalTab('add')">
+                    <i class="fa-solid fa-user-plus nav-icon"></i>
+                    <span class="nav-text">Add Patient</span>
+                    <div class="nav-tooltip">Add Patient</div>
+                </li>
                 <li onclick="app.switchHospitalTab('doctors')">
                     <i class="fa-solid fa-user-doctor nav-icon"></i>
                     <span class="nav-text">Doctor Availability</span>
                     <div class="nav-tooltip">Doctor Availability</div>
                 </li>
-
-                <h2><i class="fa-solid fa-hospital-user"></i> Hospital</h2>
-            </div>
-            <ul class="sidebar-nav">
-                <li class="active" onclick="app.switchHospitalTab('patients')"><i class="fa-solid fa-users"></i> View
-                    Patients</li>
-                <li onclick="app.switchHospitalTab('add')"><i class="fa-solid fa-user-plus"></i> Add Patient</li>
-                <li><i class="fa-solid fa-file-medical"></i> Reports</li>
-                <li><i class="fa-solid fa-prescription-bottle-medical"></i> Prescriptions</li>
-                <li><i class="fa-regular fa-calendar-check"></i> Appointments</li>
-
             </ul>
             <div class="sidebar-footer">
                 <button onclick="app.logout()">
@@ -71,6 +65,69 @@
             </header>
 
             <div class="dash-body">
+                <!-- Dashboard Stats Grid -->
+                <div class="stats-overview">
+                    <div class="stat-card fade-up">
+                        <div class="stat-icon-3d sc-blue">
+                            <i class="fa-solid fa-users"></i>
+                            <div class="icon-glow"></div>
+                        </div>
+                        <div class="stat-details">
+                            <span class="stat-label">Total Patients</span>
+                            <h2 class="stat-value">248</h2>
+                            <div class="stat-trend up">
+                                <i class="fa-solid fa-arrow-up"></i>
+                                <span>+12% vs last month</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card fade-up">
+                        <div class="stat-icon-3d sc-red">
+                            <i class="fa-solid fa-heart-pulse"></i>
+                            <div class="icon-glow"></div>
+                        </div>
+                        <div class="stat-details">
+                            <span class="stat-label">Critical Cases</span>
+                            <h2 class="stat-value">12</h2>
+                            <div class="stat-trend down">
+                                <i class="fa-solid fa-circle-exclamation"></i>
+                                <span>Immediate attention</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card fade-up">
+                        <div class="stat-icon-3d sc-green">
+                            <i class="fa-solid fa-calendar-check"></i>
+                            <div class="icon-glow"></div>
+                        </div>
+                        <div class="stat-details">
+                            <span class="stat-label">Appointments</span>
+                            <h2 class="stat-value">34</h2>
+                            <div class="stat-trend neutral">
+                                <i class="fa-solid fa-clock"></i>
+                                <span>8 pending today</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card fade-up">
+                        <div class="stat-icon-3d sc-purple">
+                            <i class="fa-solid fa-file-waveform"></i>
+                            <div class="icon-glow"></div>
+                        </div>
+                        <div class="stat-details">
+                            <span class="stat-label">Reports Uploaded</span>
+                            <h2 class="stat-value">1,204</h2>
+                            <div class="stat-trend up">
+                                <i class="fa-solid fa-check-double"></i>
+                                <span>98% success rate</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Patient List View -->
                 <div id="hosp-tab-patients" class="tab-content active">
                     <div class="card">

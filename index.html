@@ -206,7 +206,38 @@
             components.renderNavbar('home');
             components.renderFooter();
             app.initAnimations();
-            app.initPillNav();
+            
+            // Dynamic Auth UI for Hero/Portal
+            const role = localStorage.getItem('nexus_user_role');
+            if (role) {
+                const dashUrl = role === 'hospital' ? 'hospital-dashboard.html' : 'patient-dashboard.html';
+                const dashName = role.charAt(0).toUpperCase() + role.slice(1);
+                
+                // Update Hero Buttons
+                const heroBtns = document.querySelector('.hero-buttons');
+                if (heroBtns) {
+                    heroBtns.innerHTML = `
+                        <a href="${dashUrl}" class="btn-primary" style="text-decoration:none;">
+                            <i class="fa-solid fa-gauge"></i> Return to ${dashName} Dashboard
+                        </a>
+                    `;
+                }
+
+                // Update Portal Cards
+                if (role === 'hospital') {
+                    const hospitalBtn = document.querySelector('.p3-btn');
+                    if (hospitalBtn) {
+                        hospitalBtn.innerHTML = `Go to Dashboard <i class="fa-solid fa-arrow-right"></i>`;
+                        hospitalBtn.onclick = () => window.location.href = 'hospital-dashboard.html';
+                    }
+                } else {
+                    const patientBtn = document.querySelector('.p1-btn');
+                    if (patientBtn) {
+                        patientBtn.innerHTML = `Go to Dashboard <i class="fa-solid fa-arrow-right"></i>`;
+                        patientBtn.onclick = () => window.location.href = 'patient-dashboard.html';
+                    }
+                }
+            }
         });
     </script>
 </body>
