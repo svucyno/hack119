@@ -105,31 +105,71 @@ const app = {
     },
 
     renderPatients: function() {
-        const tbody = document.getElementById('patientTableBody');
-        if (!tbody) return;
+        const container = document.getElementById('patientCardsContainer');
+        if (!container) return;
         
-        tbody.innerHTML = '';
+        container.innerHTML = '';
         const patients = this.getPatients();
         
         if (patients.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;">No patients registered</td></tr>`;
+            container.innerHTML = `<div style="text-align:center; grid-column: 1 / -1; padding: 2rem;">No patients registered</div>`;
             return;
         }
 
-        patients.forEach(p => {
+        patients.forEach((p, idx) => {
             const statusClass = p.status === 'Stable' ? 'stable' : 'critical';
-            const row = `
-                <tr>
-                    <td><strong>${p.id}</strong></td>
-                    <td>${p.name}</td>
-                    <td>${p.age} / ${p.gender.charAt(0)}</td>
-                    <td>${p.condition}</td>
-                    <td><span class="status ${statusClass}">${p.status}</span></td>
-                    <td><button class="btn-outline-sm">View details</button></td>
-                </tr>
+            
+            const mockReports = p.reports ? p.reports : "No reports uploaded.";
+            const mockPresc = p.prescription ? p.prescription : "No prescriptions issued yet.";
+
+            const card = document.createElement('div');
+            card.className = 'pat-card';
+            
+            card.innerHTML = `
+                <div class="pat-card-header" onclick="app.togglePatientSummary(${idx})">
+                    <div class="pat-avatar"><i class="fa-solid fa-hospital-user"></i></div>
+                    <div>
+                        <h4 style="color: var(--text-primary); margin:0;">${p.name}</h4>
+                        <small style="color: var(--text-secondary);">${p.id}</small>
+                    </div>
+                </div>
+                <!-- Initially hidden summary -->
+                <div class="pat-details" id="pat-summary-${idx}" style="display: none;">
+                    <p><strong>Name:</strong> <span>${p.name}</span></p>
+                    <p><strong>Age/Gender:</strong> <span>${p.age} / ${p.gender}</span></p>
+                    <p><strong>Status:</strong> <span class="status ${statusClass}">${p.status}</span></p>
+                    <div class="pat-actions">
+                        <button class="btn-outline-sm" onclick="app.togglePatientDetails(${idx})">View details</button>
+                    </div>
+                </div>
+                <!-- Initially hidden extended details -->
+                <div class="pat-extended-details" id="pat-ext-${idx}">
+                    <p style="margin-bottom:0.5rem; display:block;"><strong>Reports:</strong><br/> <span style="color:var(--text-light); font-size:0.9rem;">${mockReports}</span></p>
+                    <p style="display:block;"><strong>Prescription:</strong><br/> <span style="color:var(--text-light); font-size:0.9rem;">${mockPresc}</span></p>
+                </div>
             `;
-            tbody.innerHTML += row;
+            container.appendChild(card);
         });
+    },
+
+    togglePatientSummary: function(idx) {
+        const summary = document.getElementById('pat-summary-' + idx);
+        const ext = document.getElementById('pat-ext-' + idx);
+        if(summary.style.display === 'none') {
+            summary.style.display = 'block';
+        } else {
+            summary.style.display = 'none';
+            ext.style.display = 'none'; // hide extended too
+        }
+    },
+
+    togglePatientDetails: function(idx) {
+        const ext = document.getElementById('pat-ext-' + idx);
+        if(ext.style.display === 'none' || ext.style.display === '') {
+            ext.style.display = 'block';
+        } else {
+            ext.style.display = 'none';
+        }
     },
 
     addPatient: function() {
@@ -137,6 +177,9 @@ const app = {
         const age = document.getElementById('apAge').value;
         const gender = document.getElementById('apGender').value;
         const condition = document.getElementById('apCondition').value;
+        const reportsInput = document.getElementById('apReports');
+        const reports = reportsInput && reportsInput.files && reportsInput.files.length > 0 ? reportsInput.files[0].name : '';
+        const prescription = document.getElementById('apPrescription') ? document.getElementById('apPrescription').value : '';
         
         // simple validation
         if(!name || !age || !condition) return;
@@ -150,6 +193,8 @@ const app = {
             age: age,
             gender: gender,
             condition: condition,
+            reports: reports,
+            prescription: prescription,
             status: 'Stable' // default
         });
 
