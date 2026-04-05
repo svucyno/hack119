@@ -1435,7 +1435,110 @@ const app = {
         // 4. Update Prescription highlights
         const medSummary = document.querySelector('.card:has(.fa-pills) .card-head + div'); // Adjust selector as needed
         // Assuming there's a meds section we want to update
-    }
+
+        // 5. Store vitals in app state for AI context
+        this._currentPatientVitals = vitals;
+    },
+
+    handleAiChat: function() {
+        const input = document.getElementById('aiChatInput');
+        const chatWindow = document.getElementById('aiChatWindow');
+        if (!input || !chatWindow) return;
+
+        const text = input.value.trim();
+        if (!text) return;
+
+        // 1. Append User Message
+        const userMsg = document.createElement('div');
+        userMsg.style = "display:flex; gap:12px; align-self:flex-end; max-width:85%; flex-direction:row-reverse; margin-bottom:20px;";
+        userMsg.innerHTML = `
+            <div style="width:32px; height:32px; border-radius:50%; background:var(--glass); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:0.8rem; color:var(--accent2); font-weight:700;">JD</div>
+            <div style="background:var(--accent); color:#fff; padding:12px 18px; border-radius:16px 0 16px 16px; font-size:0.9rem; line-height:1.5; box-shadow: 0 4px 15px rgba(108,99,255,0.3);">
+                ${text}
+            </div>
+        `;
+        chatWindow.appendChild(userMsg);
+        input.value = '';
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+
+        // 2. Typing Indicator
+        const typingId = 'ai-typing-' + Date.now();
+        const typingMsg = document.createElement('div');
+        typingMsg.id = typingId;
+        typingMsg.style = "display:flex; gap:12px; align-self:flex-start; max-width:85%; margin-bottom:20px;";
+        typingMsg.innerHTML = `
+            <div style="width:32px; height:32px; border-radius:8px; background:linear-gradient(135deg, var(--accent), var(--accent2)); display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:0.8rem; color:#fff;">
+              <i class="fa-solid fa-robot"></i>
+            </div>
+            <div style="background:rgba(255,255,255,0.06); padding:14px 18px; border-radius:0 16px 16px 16px; font-size:0.9rem; line-height:1.6; border:1px solid var(--border); color: var(--muted);">
+              Nexus AI is thinking...
+            </div>
+        `;
+        chatWindow.appendChild(typingMsg);
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+
+        // 3. Simulated AI Response
+        setTimeout(() => {
+            typingMsg.remove();
+            
+            const vitals = this._currentPatientVitals || { bp: { sys: 120, dia: 80 }, sugar: { val: 108 }, hemo: { val: 13.8 } };
+            const firstName = localStorage.getItem('nexus_user_name')?.split(' ')[0] || 'John';
+            
+            let response = `I'm here to help, ${firstName}. Based on your latest records, your BP is ${vitals.bp.sys}/${vitals.bp.dia} and blood sugar is ${vitals.sugar.val} mg/dL.`;
+            
+            const lowText = text.toLowerCase();
+            if (lowText.includes('sugar') || lowText.includes('diabetes')) {
+                response = `Your current blood sugar is <strong style="color:var(--warn);">${vitals.sugar.val} mg/dL</strong>. Since this is in the borderline range, I recommend focusing on a fiber-rich diet and staying hydrated. Would you like a meal plan?`;
+            } else if (lowText.includes('bp') || lowText.includes('pressure') || lowText.includes('heart')) {
+                response = `Your blood pressure is <strong style="color:var(--accent2);">${vitals.bp.sys}/${vitals.bp.dia} mmHg</strong>, which is within the normal range. Great job maintaining your cardiovascular health!`;
+            } else if (lowText.includes('hemoglobin') || lowText.includes('blood')) {
+                response = `Your hemoglobin level is <strong style="color:var(--accent2);">${vitals.hemo.val} g/dL</strong>. This is very healthy for an adult male. No signs of anemia detected.`;
+            } else if (lowText.includes('hello') || lowText.includes('hi')) {
+                response = `Hello ${firstName}! I'm Nexus, your health assistant. How are you feeling today? I can help you understand your reports or book an appointment.`;
+            }
+
+            const aiMsg = document.createElement('div');
+            aiMsg.style = "display:flex; gap:12px; align-self:flex-start; max-width:85%; margin-bottom:20px;";
+            aiMsg.innerHTML = `
+                <div style="width:32px; height:32px; border-radius:8px; background:linear-gradient(135deg, var(--accent), var(--accent2)); display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:0.8rem; color:#fff;">
+                  <i class="fa-solid fa-robot"></i>
+                </div>
+                <div style="background:rgba(255,255,255,0.06); padding:14px 18px; border-radius:0 16px 16px 16px; font-size:0.9rem; line-height:1.6; border:1px solid var(--border);">
+                  ${response}
+                </div>
+            `;
+            chatWindow.appendChild(aiMsg);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }, 1500);
+    },
+
+    addFamilyMember: function() {
+        const memberName = prompt("Enter Family Member Name:");
+        if (!memberName) return;
+        
+        const relation = prompt("Enter Relation (e.g. Sister, Brother):");
+        if (!relation) return;
+
+        this.showToast(`Request sent to ${memberName} (${relation}). Once they approve, you'll see their vitals here.`, 'info');
+        
+        // Simulate a new member card being added (visually only for now)
+        const container = document.querySelector('#viewFamilyConnect .g3');
+        if (container) {
+            const newCard = document.createElement('div');
+            newCard.className = 'card stat-card';
+            newCard.style = "position:relative; overflow:hidden; border-color:var(--accent);";
+            newCard.innerHTML = `
+                <div style="position:absolute; top:0; right:0; padding:8px 12px; background:rgba(108,99,255,0.1); font-size:0.6rem; font-weight:700; color:var(--accent); border-bottom-left-radius:12px;">PENDING</div>
+                <div class="stat-top"><div class="stat-icon ic-red" style="background:rgba(108,99,255,0.1); color:var(--accent);">${memberName.substring(0,2).toUpperCase()}</div><span class="chip c-warn">Waiting</span></div>
+                <div>
+                    <div class="stat-name">${relation} (${memberName})</div>
+                    <div style="font-size:0.75rem; color:var(--muted); margin-top:10px;">Waiting for synchronization...</div>
+                </div>
+            `;
+            // Insert before the "Add New Member" button
+            container.insertBefore(newCard, document.getElementById('addFamilyMemberBtn'));
+        }
+    },
 };
 
 
