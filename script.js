@@ -99,7 +99,6 @@ const app = {
         // Update nav styling
         const navItems = document.querySelectorAll('#view-hospital-dashboard .sidebar-nav li');
         navItems.forEach(item => item.classList.remove('active'));
-        // Find by simple iteration or event logic (event logic is simple via click usually but here we hardcode mapping)
         event.currentTarget.classList.add('active');
 
         // Hide all tabs
@@ -110,10 +109,132 @@ const app = {
         // Show active
         document.getElementById(`hosp-tab-${tabId}`).classList.remove('hidden');
 
-        // Lazy render
-        if (tabId === 'doctors') this.renderDoctors();
-        if (tabId === 'patients') this.renderPatients();
+        // Render doctor cards when that tab opens
+        if (tabId === 'doctors') {
+            this.renderDoctors();
+        }
     },
+
+    // --- DOCTOR DATA ---
+    doctors: [
+        { id: 1, name: 'Dr. Arjun Mehta',   specialty: 'Cardiologist',       icon: 'fa-heart-pulse',    status: 'available', patients: 8,  since: '08:00 AM', accent: '#38BDF8' },
+        { id: 2, name: 'Dr. Priya Sharma',   specialty: 'Neurologist',         icon: 'fa-brain',          status: 'busy',      patients: 5,  since: '09:30 AM', accent: '#A78BFA' },
+        { id: 3, name: 'Dr. Rajan Das',      specialty: 'Orthopedic Surgeon',  icon: 'fa-bone',           status: 'surgery',   patients: 3,  since: '07:00 AM', accent: '#FB7185' },
+        { id: 4, name: 'Dr. Nisha Kapoor',   specialty: 'Pediatrician',        icon: 'fa-child-reaching', status: 'available', patients: 12, since: '08:30 AM', accent: '#34D399' },
+        { id: 5, name: 'Dr. Samuel Okafor',  specialty: 'General Physician',   icon: 'fa-stethoscope',    status: 'offline',   patients: 0,  since: '—',        accent: '#64748B' },
+        { id: 6, name: 'Dr. Tanvi Reddy',    specialty: 'Ophthalmologist',     icon: 'fa-eye',            status: 'available', patients: 6,  since: '09:00 AM', accent: '#FBBF24' },
+        { id: 7, name: 'Dr. Kiran Bose',     specialty: 'Dermatologist',       icon: 'fa-hand-holding-medical', status: 'busy', patients: 4, since: '10:00 AM', accent: '#F472B6' },
+        { id: 8, name: 'Dr. Aditya Singh',   specialty: 'Radiologist',         icon: 'fa-radiation',      status: 'surgery',   patients: 2,  since: '06:30 AM', accent: '#EF4444' },
+    ],
+
+    statusLabels: {
+        available: '🟢 Available',
+        busy:      '🟡 Busy (Consultation)',
+        surgery:   '🔴 In Surgery',
+        offline:   '⚫ Offline',
+    },
+
+    renderDoctors: function() {
+        const grid = document.getElementById('doctorCardsGrid');
+        if (!grid) return;
+        grid.innerHTML = '';
+
+        this.doctors.forEach((doc, idx) => {
+            const labelText = this.statusLabels[doc.status] || doc.status;
+
+            const card = document.createElement('div');
+            card.className = 'doc-card';
+            card.dataset.status = doc.status;
+            card.style.setProperty('--card-accent', doc.accent);
+            card.style.transitionDelay = `${idx * 60}ms`;
+
+            card.innerHTML = `
+                <div class="doc-avatar-wrap">
+                    <div class="doc-avatar">
+                        <i class="fa-solid ${doc.icon}"></i>
+                    </div>
+                    <span class="doc-status-badge ${doc.status}" id="doc-badge-${doc.id}"></span>
+                </div>
+                <div class="doc-name">${doc.name}</div>
+                <div class="doc-specialty"><i class="fa-solid fa-circle-dot"></i>${doc.specialty}</div>
+                <div class="doc-meta">
+                    <span class="doc-meta-chip"><i class="fa-solid fa-users"></i> ${doc.patients} Patients</span>
+                    <span class="doc-meta-chip"><i class="fa-regular fa-clock"></i> Since ${doc.since}</span>
+                </div>
+                <div class="doc-status-display" id="doc-status-display-${doc.id}">
+                    <span class="status-dot ${doc.status}"></span>
+                    <span class="doc-status-label">${labelText}</span>
+                </div>
+            `;
+
+            grid.appendChild(card);
+
+            // Stagger entrance animation
+            requestAnimationFrame(() => {
+                setTimeout(() => card.classList.add('visible'), idx * 80);
+            });
+        });
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.doc-status-select-wrap')) {
+                document.querySelectorAll('.doc-dropdown.open').forEach(dd => dd.classList.remove('open'));
+                document.querySelectorAll('.doc-status-btn.open').forEach(btn => btn.classList.remove('open'));
+            }
+        }, { capture: true });
+    },
+
+    filterDoctors: function(status, clickedBtn) {
+        // Update active state on filter buttons
+        document.querySelectorAll('.doc-filter-btn').forEach(btn => btn.classList.remove('active'));
+        clickedBtn.classList.add('active');
+
+        // Show/hide cards with animation
+        const cards = document.querySelectorAll('#doctorCardsGrid .doc-card');
+        cards.forEach(card => {
+            const cardStatus = card.dataset.status;
+            if (status === 'all' || cardStatus === status) {
+                card.style.display = '';
+                requestAnimationFrame(() => card.classList.add('visible'));
+            } else {
+                card.classList.remove('visible');
+                // delay display:none until fade-out
+                setTimeout(() => {
+                    if (!card.classList.contains('visible')) card.style.display = 'none';
+                }, 400);
+            }
+        });
+    },
+
+
+    setDocStatus: function(docId, newStatus) {
+        const doc = this.doctors.find(d => d.id === docId);
+        if (!doc) return;
+        doc.status = newStatus;
+
+        // Update badge animation class
+        const badge = document.getElementById(`doc-badge-${docId}`);
+        const dot   = document.querySelector(`#doc-btn-${docId} .status-dot`);
+        const label = document.getElementById(`doc-label-${docId}`);
+
+        if (badge) badge.className = `doc-status-badge ${newStatus}`;
+        if (dot)   dot.className   = `status-dot ${newStatus}`;
+        if (label) label.textContent = this.statusLabels[newStatus];
+
+        // Update selected state in dropdown items
+        const dd = document.getElementById(`doc-dd-${docId}`);
+        if (dd) {
+            dd.querySelectorAll('.doc-dropdown-item').forEach(item => item.classList.remove('selected'));
+            const items = dd.querySelectorAll('.doc-dropdown-item');
+            const keys  = Object.keys(this.statusLabels);
+            const idx   = keys.indexOf(newStatus);
+            if (items[idx]) items[idx].classList.add('selected');
+        }
+
+        // Close dropdown
+        this.toggleDocDropdown(-1); // close all
+    },
+
 
     renderPatients: function() {
         const container = document.getElementById('patientCardsContainer');
@@ -219,122 +340,6 @@ const app = {
         // Go back to table view
         document.querySelector('.sidebar-nav li').click(); // programmatic click to first tab
         this.renderPatients();
-    },
-
-    getDoctors: function() {
-        let doctors = localStorage.getItem('nexus_doctors');
-        if (!doctors) {
-            // Mock doctors if None exist
-            const mockDoctors = [
-                { id: 'DOC-1', name: 'Dr. Sarah Jenkins', specialty: 'Cardiology', status: 'available' },
-                { id: 'DOC-2', name: 'Dr. Michael Chen', specialty: 'Pediatrics', status: 'busy' },
-                { id: 'DOC-3', name: 'Dr. Emily Carter', specialty: 'Neurology', status: 'surgery' },
-                { id: 'DOC-4', name: 'Dr. James Wilson', specialty: 'Oncology', status: 'offline' }
-            ];
-            localStorage.setItem('nexus_doctors', JSON.stringify(mockDoctors));
-            return mockDoctors;
-        }
-        return JSON.parse(doctors);
-    },
-
-    saveDoctors: function(doctors) {
-        localStorage.setItem('nexus_doctors', JSON.stringify(doctors));
-    },
-
-    renderDoctors: function() {
-        const container = document.getElementById('doctorCardsContainer');
-        if (!container) return;
-        
-        container.innerHTML = '';
-        const doctors = this.getDoctors();
-        
-        doctors.forEach((doc, idx) => {
-            let statusIcon = 'status-offline';
-            let statusText = 'Offline';
-            if (doc.status === 'available') { statusIcon = 'status-available'; statusText = 'Available'; }
-            if (doc.status === 'busy') { statusIcon = 'status-busy'; statusText = 'Busy'; }
-            if (doc.status === 'surgery') { statusIcon = 'status-surgery'; statusText = 'In Surgery'; }
-
-            const card = document.createElement('div');
-            card.className = 'doc-card';
-            card.innerHTML = `
-                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                    <div style="display: flex; gap: 1rem; align-items: center;">
-                        <div class="pat-avatar"><i class="fa-solid fa-user-doctor"></i></div>
-                        <div>
-                            <h4 style="color: var(--text-primary); margin:0;">${doc.name}</h4>
-                            <small style="color: var(--text-secondary);">${doc.specialty}</small>
-                        </div>
-                    </div>
-                </div>
-                <div style="margin-top: 1.5rem;">
-                    <div style="position: relative; display: inline-block; width: 100%;">
-                        <button class="radix-dropdown-trigger" onclick="app.toggleDoctorDropdown('${doc.id}', event)" style="width: 100%;">
-                            <span style="display: flex; align-items: center; gap: 0.5rem;">
-                                <span class="status-dot ${statusIcon}"></span> ${statusText}
-                            </span>
-                            <i class="fa-solid fa-chevron-down" style="font-size: 0.8rem; opacity: 0.7;"></i>
-                        </button>
-                        <div id="dropdown-${doc.id}" class="radix-dropdown-content" data-state="closed">
-                            <div class="radix-dropdown-item" onclick="app.updateDoctorStatus('${doc.id}', 'available', event)">
-                                <span class="status-dot status-available"></span> Available
-                            </div>
-                            <div class="radix-dropdown-item" onclick="app.updateDoctorStatus('${doc.id}', 'busy', event)">
-                                <span class="status-dot status-busy"></span> Busy
-                            </div>
-                            <div class="radix-dropdown-item" onclick="app.updateDoctorStatus('${doc.id}', 'surgery', event)">
-                                <span class="status-dot status-surgery"></span> In Surgery
-                            </div>
-                            <div class="radix-dropdown-item" onclick="app.updateDoctorStatus('${doc.id}', 'offline', event)">
-                                <span class="status-dot status-offline"></span> Offline
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-            container.appendChild(card);
-        });
-
-        // Attach global click listener to close dropdowns if clicked outside
-        if(!window.dropdownListenerAdded) {
-            document.addEventListener('click', (e) => {
-                document.querySelectorAll('.radix-dropdown-content').forEach(dropdown => {
-                    if (dropdown.getAttribute('data-state') === 'open') {
-                        dropdown.setAttribute('data-state', 'closed');
-                    }
-                });
-            });
-            window.dropdownListenerAdded = true;
-        }
-    },
-
-    toggleDoctorDropdown: function(doctorId, event) {
-        event.stopPropagation(); // prevent global click from instantly closing
-        
-        // Close all others first
-        document.querySelectorAll('.radix-dropdown-content').forEach(d => {
-            if(d.id !== `dropdown-${doctorId}`) {
-                d.setAttribute('data-state', 'closed');
-            }
-        });
-
-        const dropdown = document.getElementById(`dropdown-${doctorId}`);
-        if(dropdown) {
-            const currentState = dropdown.getAttribute('data-state');
-            dropdown.setAttribute('data-state', currentState === 'open' ? 'closed' : 'open');
-        }
-    },
-
-    updateDoctorStatus: function(doctorId, newStatus, event) {
-        event.stopPropagation();
-        
-        let doctors = this.getDoctors();
-        const docIndex = doctors.findIndex(d => d.id === doctorId);
-        if (docIndex > -1) {
-            doctors[docIndex].status = newStatus;
-            this.saveDoctors(doctors);
-            this.renderDoctors();
-        }
     },
 
     // --- PATIENT DASHBOARD ---

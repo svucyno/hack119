@@ -121,9 +121,16 @@
                 <div id="hosp-tab-doctors" class="tab-content hidden">
                     <div class="card">
                         <div class="card-header">
-                            <h3>Doctor Availability Dashboard</h3>
+                            <h3><i class="fa-solid fa-user-doctor" style="color:var(--accent-blue);margin-right:0.6rem;"></i>Doctor Availability</h3>
+                            <div class="doc-legend">
+                                <span class="doc-legend-item doc-filter-btn active" data-filter="all" onclick="app.filterDoctors('all', this)">All</span>
+                                <span class="doc-legend-item doc-filter-btn" data-filter="available" onclick="app.filterDoctors('available', this)"><span class="status-dot available"></span> Available</span>
+                                <span class="doc-legend-item doc-filter-btn" data-filter="busy" onclick="app.filterDoctors('busy', this)"><span class="status-dot busy"></span> Busy</span>
+                                <span class="doc-legend-item doc-filter-btn" data-filter="surgery" onclick="app.filterDoctors('surgery', this)"><span class="status-dot surgery"></span> In Surgery</span>
+                                <span class="doc-legend-item doc-filter-btn" data-filter="offline" onclick="app.filterDoctors('offline', this)"><span class="status-dot offline"></span> Offline</span>
+                            </div>
                         </div>
-                        <div class="patient-grid" id="doctorCardsContainer" style="min-height: 400px;">
+                        <div class="doctor-avail-grid" id="doctorCardsGrid">
                             <!-- Populated via JS -->
                         </div>
                     </div>
@@ -138,8 +145,8 @@
     <script src="script.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // Dashboard typically hides components.js Navbar/Footer but we provide the logic
             app.renderPatients();
-            app.renderDoctors();
             app.initAnimations();
         });
     </script>
