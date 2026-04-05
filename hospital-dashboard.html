@@ -32,17 +32,17 @@
                 </h2>
             </div>
             <ul class="sidebar-nav">
-                <li class="active" onclick="app.switchHospitalTab('patients')">
+                <li class="active" onclick="app.switchHospitalTab(event, 'patients')">
                     <i class="fa-solid fa-hospital-user nav-icon"></i>
                     <span class="nav-text">View Patients</span>
                     <div class="nav-tooltip">View Patients</div>
                 </li>
-                <li onclick="app.switchHospitalTab('add')">
+                <li onclick="app.switchHospitalTab(event, 'add')">
                     <i class="fa-solid fa-user-plus nav-icon"></i>
                     <span class="nav-text">Add Patient</span>
                     <div class="nav-tooltip">Add Patient</div>
                 </li>
-                <li onclick="app.switchHospitalTab('doctors')">
+                <li onclick="app.switchHospitalTab(event, 'doctors')">
                     <i class="fa-solid fa-stethoscope nav-icon"></i>
                     <span class="nav-text">Doctor Availability</span>
                     <div class="nav-tooltip">Doctor Availability</div>
@@ -246,7 +246,7 @@
                                 </div>
 
                                 <div class="form-actions-premium">
-                                    <button type="button" class="btn-ghost" onclick="app.switchHospitalTab('patients')">Cancel</button>
+                                    <button type="button" class="btn-ghost" onclick="app.switchHospitalTab(event, 'patients')">Cancel</button>
                                     <button type="submit" class="btn-primary-glow">
                                         <i class="fa-solid fa-save"></i> Register & Generate ID
                                     </button>

@@ -3294,3 +3294,95 @@ button {
     color: var(--accent-blue);
     box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
 }
+
+/* --- Toast Notifications --- */
+.nexus-toast {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: var(--primary-blue-light);
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: var(--border-radius-md);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    z-index: 9999;
+    transform: translateY(150%);
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border-left: 4px solid var(--accent-blue);
+}
+
+.nexus-toast.visible { transform: translateY(0); }
+.nexus-toast.success { border-color: var(--accent-green); }
+.nexus-toast.error { border-color: var(--danger); }
+.nexus-toast.info { border-color: var(--accent-blue); }
+
+@keyframes toastIn {
+    from { transform: translateY(150%) scale(0.9); opacity: 0; }
+    to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* --- Action Modal Refinement --- */
+#actionModalOverlay {
+    background: rgba(2, 6, 23, 0.85);
+    backdrop-filter: blur(10px);
+}
+
+.action-modal-container {
+    background: var(--bg-card);
+    border: 1px solid var(--accent-blue);
+    position: relative;
+    box-shadow: 0 0 50px rgba(56, 189, 248, 0.2);
+    border-radius: var(--border-radius-lg);
+    animation: modalScale 0.3s ease-out;
+}
+
+@keyframes modalScale {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.action-modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    margin-top: 1.5rem;
+}
+
+.modal-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.modal-input-group label {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.modal-input-group input, 
+.modal-input-group select {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    padding: 0.8rem;
+    border-radius: var(--border-radius-sm);
+    color: white;
+}
+
+.action-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-close-btn {
+    background: transparent;
+    color: var(--text-light);
+    font-size: 1.2rem;
+    padding: 0.5rem;
+    cursor: pointer;
+}

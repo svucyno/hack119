@@ -161,11 +161,13 @@ const app = {
         }
     },
 
-    switchHospitalTab: function(tabId) {
+    switchHospitalTab: function(event, tabId) {
         // Update nav styling
         const navItems = document.querySelectorAll('#view-hospital-dashboard .sidebar-nav li');
         navItems.forEach(item => item.classList.remove('active'));
-        event.currentTarget.classList.add('active');
+        if (event && event.currentTarget) {
+            event.currentTarget.classList.add('active');
+        }
 
         // Hide all tabs
         document.querySelectorAll('#view-hospital-dashboard .tab-content').forEach(el => {
@@ -652,7 +654,7 @@ const app = {
                         type: file.name.split('.').pop().toUpperCase()
                     });
                     this.savePatients(patients);
-                    this.renderPatientDetail(patient);
+                    this.selectPatient(patientId);
                 }
                 this.showToast(`Report "${file.name}" attached successfully`, 'success');
             }
@@ -723,7 +725,7 @@ const app = {
 
         this.savePatients(patients);
         this.closeActionModal();
-        this.renderPatientDetail(patient);
+        this.selectPatient(this._activePatientId);
         this.showToast(`${name} ${dose} added to prescription`, 'success');
     },
 
@@ -769,7 +771,7 @@ const app = {
         patient.nextAppt = date;
         this.savePatients(patients);
         this.closeActionModal();
-        this.renderPatientDetail(patient);
+        this.selectPatient(this._activePatientId);
         this.showToast(`Follow-up scheduled for ${date}`, 'success');
     },
 
@@ -838,17 +840,19 @@ const app = {
         // Switch back to patients tab and select the new patient
         this.selectedPatientId = newId; 
         this.renderPatientRecords(); // This will render the list and auto-select the current selectedPatientId
-        this.switchHospitalTab('patients');
+        this.switchHospitalTab(null, 'patients');
         
         // Trigger selectPatient to show details immediately
         this.selectPatient(newId);
     },
 
     // --- PATIENT DASHBOARD ---
-    switchPatientTab: function(tabId) {
+    switchPatientTab: function(event, tabId) {
         const navItems = document.querySelectorAll('#view-patient-dashboard .sidebar-nav li');
         navItems.forEach(item => item.classList.remove('active'));
-        event.currentTarget.classList.add('active');
+        if (event && event.currentTarget) {
+            event.currentTarget.classList.add('active');
+        }
 
         document.querySelectorAll('#view-patient-dashboard .tab-content').forEach(el => {
             el.classList.add('hidden');
