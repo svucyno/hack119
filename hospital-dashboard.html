@@ -18,17 +18,35 @@
     <div id="navbar-placeholder"></div>
 
     <section id="view-hospital-dashboard" class="dashboard-section">
-        <aside class="sidebar">
+        <aside class="sidebar" id="hospitalSidebar">
             <div class="sidebar-header">
-                <h2><a href="index.html" style="text-decoration:none; color:inherit; cursor:pointer;"><i class="fa-solid fa-heart-pulse"></i> HealthNexus</a></h2>
+                <h2>
+                    <a href="index.html" style="text-decoration:none; color:inherit; cursor:pointer;" class="sidebar-logo">
+                        <i class="fa-solid fa-heart-pulse logo-icon"></i>
+                        <span class="nav-text logo-text">HealthNexus</span>
+                    </a>
+                </h2>
+                <button class="sidebar-toggle" onclick="app.toggleSidebar()" title="Toggle Sidebar">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
             </div>
             <ul class="sidebar-nav">
-                <li class="active" onclick="app.switchHospitalTab('patients')"><i class="fa-solid fa-users"></i> View Patients</li>
-
-                <li><i class="fa-solid fa-user-doctor"></i> Doctor Availability</li>
+                <li class="active" onclick="app.switchHospitalTab('patients')">
+                    <i class="fa-solid fa-users nav-icon"></i>
+                    <span class="nav-text">View Patients</span>
+                    <div class="nav-tooltip">View Patients</div>
+                </li>
+                <li onclick="app.switchHospitalTab('doctors')">
+                    <i class="fa-solid fa-user-doctor nav-icon"></i>
+                    <span class="nav-text">Doctor Availability</span>
+                    <div class="nav-tooltip">Doctor Availability</div>
+                </li>
             </ul>
             <div class="sidebar-footer">
-                <button onclick="app.logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+                <button onclick="app.logout()">
+                    <i class="fa-solid fa-right-from-bracket nav-icon"></i>
+                    <span class="nav-text">Logout</span>
+                </button>
             </div>
         </aside>
         <main class="dashboard-content">
@@ -98,6 +116,18 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Doctor Availability View -->
+                <div id="hosp-tab-doctors" class="tab-content hidden">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Doctor Availability Dashboard</h3>
+                        </div>
+                        <div class="patient-grid" id="doctorCardsContainer" style="min-height: 400px;">
+                            <!-- Populated via JS -->
+                        </div>
+                    </div>
+                </div>
             </div>
         </main>
     </section>
@@ -108,8 +138,8 @@
     <script src="script.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Dashboard typically hides components.js Navbar/Footer but we provide the logic
             app.renderPatients();
+            app.renderDoctors();
             app.initAnimations();
         });
     </script>
