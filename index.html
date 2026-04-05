@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthNexus - 24/7 Smart Health Tracking</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Placeholder for Navbar -->
+    <div id="navbar-placeholder"></div>
+
+    <!-- SECTION: HOMEPAGE -->
+    <section id="view-home" class="view-section active">
+        <!-- Hero Section -->
+        <header class="hero">
+            <div class="hero-content">
+                <span class="badge">Next Generation Care</span>
+                <h1>24/7 Smart Health Tracking & Patient Care Platform</h1>
+                <p>HealthNexus integrates modern technology with compassionate care to deliver seamless emergency
+2support, smart reminders, and virtual doctor consultations all in one place.</p>
+                <div class="hero-buttons">
+                    <button class="btn-primary" onclick="app.navigate('login', 'hospital')"><i
+                            class="fa-solid fa-user-doctor"></i> Login as Hospital</button>
+                    <button class="btn-secondary" onclick="app.navigate('login', 'patient')"><i
+                            class="fa-solid fa-user-injured"></i> Login as Patient</button>
+                </div>
+            </div>
+            <div class="hero-graphics">
+                <div class="floating-card c1"><i class="fa-solid fa-heart-crack"></i> Real-time Monitoring</div>
+                <div class="floating-card c2"><i class="fa-solid fa-shield-halved"></i> Secure Data</div>
+                <div class="floating-card c3"><i class="fa-solid fa-robot"></i> AI Assisted</div>
+            </div>
+        </header>
+
+        <!-- About Section -->
+        <section id="about" class="about-section">
+            <div class="about-flex">
+                <div class="about-image-left scroll-reveal">
+                    <img src="assets/about.png" alt="HealthNexus Innovation">
+                    <div class="graphic-glow"></div>
+                </div>
+                <div class="about-info-right scroll-reveal">
+                    <span class="badge">Our Mission</span>
+                    <h2 class="about-title-premium">Bridging the Gap in Modern Healthcare</h2>
+                    <p class="about-description">HealthNexus was born from the vision that healthcare should be proactive, not just reactive. We are dedicated to providing seamless connectivity between patients and providers through cutting-edge technology. Our ecosystem brings together hospitals, patients, and families in one unified digital space.</p>
+                </div>
+            </div>
+
+            <!-- Credibility Stats -->
+            <div class="about-stats scroll-reveal">
+                <div class="stat-item">
+                    <span class="stat-number">24/7</span>
+                    <span class="stat-label">Smart Monitoring</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <span class="stat-number">200+</span>
+                    <span class="stat-label">Trusted Hospitals</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <span class="stat-number">10k+</span>
+                    <span class="stat-label">Happy Patients</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section (Portal Flow) -->
+        <section class="features-section" id="features">
+            <div class="features-bg-grid"></div>
+            <div class="section-header">
+                <span class="badge">Portal Flow</span>
+                <h2>One Platform. Three Powerful Solutions.</h2>
+                <p>Seamlessly bridging the gap between patients, emergency services, and hospitals.</p>
+            </div>
+            <div class="features-grid">
+                <!-- Card 1: Patient Portal -->
+                <div class="feature-card scroll-reveal">
+                    <div class="icon-glow g1"></div>
+                    <div class="icon-wrapper-premium p1">
+                        <i class="fa-solid fa-user-injured"></i>
+                    </div>
+                    <h3>Smart Patient Portal</h3>
+                    <p>Empowering patients with 24/7 health tracking, AI assistance, and instant medical connectivity.</p>
+                    <ul class="feature-sub-list">
+                        <li><i class="fa-solid fa-circle-check"></i> Real-time vitals & tracking</li>
+                        <li><i class="fa-solid fa-circle-check"></i> AI Symptom Assistant</li>
+                        <li><i class="fa-solid fa-circle-check"></i> Smart Med Reminders</li>
+                    </ul>
+                    <button class="btn-card-action p1-btn" onclick="app.navigate('login', 'patient')">Access Patient Portal <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+
+                <!-- Card 2: SOS Emergency Hub -->
+                <div class="feature-card scroll-reveal">
+                    <div class="icon-glow g2"></div>
+                    <div class="icon-wrapper-premium p2">
+                        <i class="fa-solid fa-truck-medical"></i>
+                    </div>
+                    <h3>Global Emergency SOS</h3>
+                    <p>Instant emergency coordination reaching the closest help and notifying family in one click.</p>
+                    <ul class="feature-sub-list">
+                        <li><i class="fa-solid fa-circle-check"></i> One-Click SOS Alert</li>
+                        <li><i class="fa-solid fa-circle-check"></i> Nearest Hospital Sync</li>
+                        <li><i class="fa-solid fa-circle-check"></i> Virtual Doctor Connect</li>
+                    </ul>
+                    <button class="btn-card-action p2-btn" onclick="app.navigate('home')">Learn More <i class="fa-solid fa-heart-pulse"></i></button>
+                </div>
+
+                <!-- Card 3: Hospital Command Center -->
+                <div class="feature-card scroll-reveal">
+                    <div class="icon-glow g3"></div>
+                    <div class="icon-wrapper-premium p3">
+                        <i class="fa-solid fa-hospital"></i>
+                    </div>
+                    <h3>Hospital Command Center</h3>
+                    <p>Advanced management tools for hospitals to monitor patient records and emergency responses.</p>
+                    <ul class="feature-sub-list">
+                        <li><i class="fa-solid fa-circle-check"></i> Patient Record Access</li>
+                        <li><i class="fa-solid fa-circle-check"></i> Real-time Health Alerts</li>
+                        <li><i class="fa-solid fa-circle-check"></i> Medical Report Analytics</li>
+                    </ul>
+                    <button class="btn-card-action p3-btn" onclick="app.navigate('login', 'hospital')">Access Hospital Portal <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section id="faq" class="faq-section">
+            <div class="section-header">
+                <h2>Frequently Asked Questions</h2>
+                <p>Find answers to common questions about our smart health platform.</p>
+            </div>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <button class="faq-question" onclick="app.toggleFaq(this)">
+                        <span>How does the 24/7 monitoring work?</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Our platform uses advanced IoT sensors and wearable integration to continuously track vital signs and send real-time data to healthcare providers.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question" onclick="app.toggleFaq(this)">
+                        <span>Is my health data secure and private?</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Yes, all health data is encrypted using industry-standard protocols and stored in secure, HIPAA-compliant servers.</p>
+                    </div>
+                </div>
+                <!-- FAQ 3 -->
+                <div class="faq-item">
+                    <button class="faq-question" onclick="app.toggleFaq(this)">
+                        <span>How does the Global SOS feature work abroad?</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Our SOS system uses global GPS tracking to locate the nearest registered hospital and emergency services, ensuring you receive help regardless of your location.</p>
+                    </div>
+                </div>
+                <!-- FAQ 4 -->
+                <div class="faq-item">
+                    <button class="faq-question" onclick="app.toggleFaq(this)">
+                        <span>Can I sync data from my existing wearables?</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Absolutely! HealthNexus supports integration with top wearable devices including Apple Watch, Fitbit, and Garmin to provide a seamless health tracking experience.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question" onclick="app.toggleFaq(this)">
+                        <span>Is my data protected by international standards?</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Yes, HealthNexus employs end-to-end encryption and strictly complies with international health data protection standards like GDPR and HIPAA.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+
+    <!-- Placeholder for Footer -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="components.js"></script>
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            components.renderNavbar('home');
+            components.renderFooter();
+            app.initAnimations();
+            app.initPillNav();
+        });
+    </script>
+</body>
+
+</html>
