@@ -33,7 +33,7 @@
             </div>
             <ul class="sidebar-nav">
                 <li class="active" onclick="app.switchHospitalTab('patients')">
-                    <i class="fa-solid fa-users nav-icon"></i>
+                    <i class="fa-solid fa-hospital-user nav-icon"></i>
                     <span class="nav-text">View Patients</span>
                     <div class="nav-tooltip">View Patients</div>
                 </li>
@@ -43,14 +43,14 @@
                     <div class="nav-tooltip">Add Patient</div>
                 </li>
                 <li onclick="app.switchHospitalTab('doctors')">
-                    <i class="fa-solid fa-user-doctor nav-icon"></i>
+                    <i class="fa-solid fa-stethoscope nav-icon"></i>
                     <span class="nav-text">Doctor Availability</span>
                     <div class="nav-tooltip">Doctor Availability</div>
                 </li>
             </ul>
             <div class="sidebar-footer">
                 <button onclick="app.logout()">
-                    <i class="fa-solid fa-right-from-bracket nav-icon"></i>
+                    <i class="fa-solid fa-power-off nav-icon"></i>
                     <span class="nav-text">Logout</span>
                 </button>
             </div>
@@ -65,128 +65,191 @@
             </header>
 
             <div class="dash-body">
-                <!-- Dashboard Stats Grid -->
-                <div class="stats-overview">
-                    <div class="stat-card fade-up">
-                        <div class="stat-icon-3d sc-blue">
-                            <i class="fa-solid fa-users"></i>
-                            <div class="icon-glow"></div>
-                        </div>
-                        <div class="stat-details">
-                            <span class="stat-label">Total Patients</span>
-                            <h2 class="stat-value">248</h2>
-                            <div class="stat-trend up">
-                                <i class="fa-solid fa-arrow-up"></i>
-                                <span>+12% vs last month</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="stat-card fade-up">
-                        <div class="stat-icon-3d sc-red">
-                            <i class="fa-solid fa-heart-pulse"></i>
-                            <div class="icon-glow"></div>
-                        </div>
-                        <div class="stat-details">
-                            <span class="stat-label">Critical Cases</span>
-                            <h2 class="stat-value">12</h2>
-                            <div class="stat-trend down">
-                                <i class="fa-solid fa-circle-exclamation"></i>
-                                <span>Immediate attention</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="stat-card fade-up">
-                        <div class="stat-icon-3d sc-green">
-                            <i class="fa-solid fa-calendar-check"></i>
-                            <div class="icon-glow"></div>
-                        </div>
-                        <div class="stat-details">
-                            <span class="stat-label">Appointments</span>
-                            <h2 class="stat-value">34</h2>
-                            <div class="stat-trend neutral">
-                                <i class="fa-solid fa-clock"></i>
-                                <span>8 pending today</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="stat-card fade-up">
-                        <div class="stat-icon-3d sc-purple">
-                            <i class="fa-solid fa-file-waveform"></i>
-                            <div class="icon-glow"></div>
-                        </div>
-                        <div class="stat-details">
-                            <span class="stat-label">Reports Uploaded</span>
-                            <h2 class="stat-value">1,204</h2>
-                            <div class="stat-trend up">
-                                <i class="fa-solid fa-check-double"></i>
-                                <span>98% success rate</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Patient List View -->
                 <div id="hosp-tab-patients" class="tab-content active">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3>Registered Patients</h3>
-                            <button class="btn-primary-sm" onclick="app.switchHospitalTab('add')">New Patient</button>
+                    <!-- Dashboard Stats Grid -->
+                    <div class="stats-overview">
+                        <div class="stat-card fade-up">
+                            <div class="stat-icon-3d sc-blue">
+                                <i class="fa-solid fa-users"></i>
+                                <div class="icon-glow"></div>
+                            </div>
+                            <div class="stat-details">
+                                <span class="stat-label">Total Patients</span>
+                                <h2 class="stat-value">248</h2>
+                                <div class="stat-trend up">
+                                    <i class="fa-solid fa-arrow-up"></i>
+                                    <span>+12% vs last month</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="table-responsive">
-                            <table class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Name</th>
-                                        <th>Age/Gender</th>
-                                        <th>Latest Condition</th>
-                                        <th>Status</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="patientTableBody">
-                                    <!-- Populated via JS -->
-                                </tbody>
-                            </table>
+
+                        <div class="stat-card fade-up">
+                            <div class="stat-icon-3d sc-red">
+                                <i class="fa-solid fa-heart-pulse"></i>
+                                <div class="icon-glow"></div>
+                            </div>
+                            <div class="stat-details">
+                                <span class="stat-label">Critical Cases</span>
+                                <h2 class="stat-value">12</h2>
+                                <div class="stat-trend down">
+                                    <i class="fa-solid fa-circle-exclamation"></i>
+                                    <span>Immediate attention</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card fade-up">
+                            <div class="stat-icon-3d sc-green">
+                                <i class="fa-solid fa-calendar-check"></i>
+                                <div class="icon-glow"></div>
+                            </div>
+                            <div class="stat-details">
+                                <span class="stat-label">Appointments</span>
+                                <h2 class="stat-value">34</h2>
+                                <div class="stat-trend neutral">
+                                    <i class="fa-solid fa-clock"></i>
+                                    <span>8 pending today</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card fade-up">
+                            <div class="stat-icon-3d sc-purple">
+                                <i class="fa-solid fa-file-waveform"></i>
+                                <div class="icon-glow"></div>
+                            </div>
+                            <div class="stat-details">
+                                <span class="stat-label">Reports Uploaded</span>
+                                <h2 class="stat-value">1,204</h2>
+                                <div class="stat-trend up">
+                                    <i class="fa-solid fa-check-double"></i>
+                                    <span>98% success rate</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- New Patient Records Layout -->
+                    <div class="records-container fade-up">
+                        <div class="records-header">
+                            <div class="header-content">
+                                <h3>Patient Records</h3>
+                                <div class="header-actions">
+                                    <button class="btn-primary-sm" onclick="app.switchHospitalTab('add')">
+                                        <i class="fa-solid fa-plus"></i> Add Patient
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="search-bar-wrap">
+                                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                                <input type="text" id="patientSearchInput" placeholder="Search by name or Patient ID..." oninput="app.searchPatients(this.value)">
+                            </div>
+                        </div>
+
+                        <div class="records-layout">
+                            <!-- Sidebar List -->
+                            <div class="records-sidebar" id="patientRecordsList">
+                                <!-- Populated via app.renderPatientRecords() -->
+                            </div>
+
+                            <!-- Detail Panel -->
+                            <div class="records-detail" id="patientDetailPanel">
+                                <div class="detail-empty-state">
+                                    <div class="empty-icon"><i class="fa-solid fa-folder-open"></i></div>
+                                    <p>Select a patient record to view comprehensive clinical details and actions.</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Add Patient View -->
                 <div id="hosp-tab-add" class="tab-content hidden">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3>Register New Patient</h3>
+                    <div class="card registration-card animate-fade-in">
+                        <div class="card-header registration-header">
+                            <div class="header-icon-3d">
+                                <i class="fa-solid fa-user-plus"></i>
+                                <div class="icon-glow"></div>
+                            </div>
+                            <div class="header-text">
+                                <h3>Patient Registration</h3>
+                                <p>Mandatory unique ID will be generated upon submission</p>
+                            </div>
                         </div>
                         <div class="card-body">
-                            <form id="addPatientForm" onsubmit="event.preventDefault(); app.addPatient();">
-                                <div class="form-grid">
+                            <form id="addPatientForm" onsubmit="event.preventDefault(); app.addPatient();" class="compact-form">
+                                <div class="form-row-grid">
                                     <div class="input-group">
-                                        <label>Full Name</label>
-                                        <input type="text" id="apName" required>
+                                        <label><i class="fa-solid fa-user"></i> Full Name</label>
+                                        <input type="text" id="apName" placeholder="John Doe" required>
                                     </div>
                                     <div class="input-group">
-                                        <label>Age</label>
-                                        <input type="number" id="apAge" required>
+                                        <label><i class="fa-solid fa-calendar"></i> Age</label>
+                                        <input type="number" id="apAge" placeholder="25" required>
                                     </div>
                                     <div class="input-group">
-                                        <label>Gender</label>
+                                        <label><i class="fa-solid fa-venus-mars"></i> Gender</label>
                                         <select id="apGender" required>
+                                            <option value="" disabled selected>Select Gender</option>
                                             <option value="Male">Male</option>
                                             <option value="Female">Female</option>
                                             <option value="Other">Other</option>
                                         </select>
                                     </div>
-                                    <div class="input-group full-width">
-                                        <label>Medical Details / Condition</label>
-                                        <textarea id="apCondition" rows="3" required></textarea>
+                                </div>
+
+                                <div class="form-row-grid">
+                                    <div class="input-group">
+                                        <label><i class="fa-solid fa-droplet"></i> Blood Group</label>
+                                        <select id="apBloodGroup">
+                                            <option value="—">Select (Optional)</option>
+                                            <option value="A+">A+</option>
+                                            <option value="A-">A-</option>
+                                            <option value="B+">B+</option>
+                                            <option value="B-">B-</option>
+                                            <option value="O+">O+</option>
+                                            <option value="O-">O-</option>
+                                            <option value="AB+">AB+</option>
+                                            <option value="AB-">AB-</option>
+                                        </select>
+                                    </div>
+                                    <div class="input-group">
+                                        <label><i class="fa-solid fa-phone"></i> Contact Phone</label>
+                                        <input type="tel" id="apPhone" placeholder="+91 XXXXX XXXXX" required>
+                                    </div>
+                                    <div class="input-group">
+                                        <label><i class="fa-solid fa-envelope"></i> Email (Optional)</label>
+                                        <input type="email" id="apEmail" placeholder="john@example.com">
                                     </div>
                                 </div>
-                                <div class="form-actions mt-2">
-                                    <button type="submit" class="btn-primary">Save Patient Record</button>
+
+                                <div class="input-group full-width">
+                                    <label><i class="fa-solid fa-location-dot"></i> Residential Address</label>
+                                    <input type="text" id="apAddress" placeholder="123, Skyline Street, City" required>
+                                </div>
+
+                                <div class="input-group full-width">
+                                    <label><i class="fa-solid fa-file-arrow-up"></i> Upload Medical Reports (PDF / Image)</label>
+                                    <div class="file-upload-premium">
+                                        <input type="file" id="apMedicalReport" accept="image/*,application/pdf" hidden onchange="app.handleRegistrationFile(this)">
+                                        <button type="button" class="btn-secondary-glow" onclick="document.getElementById('apMedicalReport').click()">
+                                            <i class="fa-solid fa-paperclip"></i> Select Initial Documentation
+                                        </button>
+                                        <span id="apFileNameDisplay" class="file-name-hint">No file selected</span>
+                                    </div>
+                                </div>
+
+                                <div class="input-group full-width">
+                                    <label><i class="fa-solid fa-notes-medical"></i> Medical Condition / Initial Assessment</label>
+                                    <textarea id="apCondition" rows="2" placeholder="Describe the current condition or reason for admission..." required></textarea>
+                                </div>
+
+                                <div class="form-actions-premium">
+                                    <button type="button" class="btn-ghost" onclick="app.switchHospitalTab('patients')">Cancel</button>
+                                    <button type="submit" class="btn-primary-glow">
+                                        <i class="fa-solid fa-save"></i> Register & Generate ID
+                                    </button>
                                 </div>
                             </form>
                         </div>
@@ -196,10 +259,21 @@
                 <!-- Doctor Availability View -->
                 <div id="hosp-tab-doctors" class="tab-content hidden">
                     <div class="card">
-                        <div class="card-header">
-                            <h3><i class="fa-solid fa-user-doctor" style="color:var(--accent-blue);margin-right:0.6rem;"></i>Doctor Availability</h3>
+                        <div class="card-header doc-avail-header">
+                            <div class="header-main">
+                                <h3><i class="fa-solid fa-user-doctor" style="color:var(--accent-blue);margin-right:0.6rem;"></i>Doctor Availability</h3>
+                                <div class="hospital-selector-wrap">
+                                    <i class="fa-solid fa-hospital-symbol"></i>
+                                    <select id="hospitalSelect" onchange="app.handleHospitalChange(this)">
+                                        <option value="all">All Regional Hospitals</option>
+                                        <option value="h1">HealthNexus Central</option>
+                                        <option value="h2">Metro Clinic</option>
+                                        <option value="h3">Northside General</option>
+                                    </select>
+                                </div>
+                            </div>
                             <div class="doc-legend">
-                                <span class="doc-legend-item doc-filter-btn active" data-filter="all" onclick="app.filterDoctors('all', this)">All</span>
+                                <span class="doc-legend-item doc-filter-btn active" data-filter="all" onclick="app.filterDoctors('all', this)">All Status</span>
                                 <span class="doc-legend-item doc-filter-btn" data-filter="available" onclick="app.filterDoctors('available', this)"><span class="status-dot available"></span> Available</span>
                                 <span class="doc-legend-item doc-filter-btn" data-filter="busy" onclick="app.filterDoctors('busy', this)"><span class="status-dot busy"></span> Busy</span>
                                 <span class="doc-legend-item doc-filter-btn" data-filter="surgery" onclick="app.filterDoctors('surgery', this)"><span class="status-dot surgery"></span> In Surgery</span>
@@ -215,16 +289,41 @@
         </main>
     </section>
 
+    <!-- Full Screen Clinical Dossier Overlay -->
+    <div id="fullDossierOverlay" class="dossier-overlay hidden">
+        <div class="dossier-container">
+            <header class="dossier-header">
+                <button class="btn-back" onclick="app.closeFullDossier()">
+                    <i class="fa-solid fa-arrow-left"></i> Go Back
+                </button>
+                <div class="dossier-title">
+                    <h3>Clinical Dossier</h3>
+                </div>
+                <div class="dossier-actions">
+                    <button class="btn-primary-sm" onclick="window.print()">
+                        <i class="fa-solid fa-print"></i> Export Record
+                    </button>
+                </div>
+            </header>
+            
+            <div id="dossierContent" class="dossier-body">
+                <!-- Populated via app.openFullDossier(id) -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Generic Action Modal Overlay -->
+    <div id="actionModalOverlay" class="dossier-overlay hidden" style="z-index: 2000; align-items: center; justify-content: center; display: none;">
+        <div class="action-modal-container card" style="width: 100%; max-width: 500px; padding: 2rem; border-color: var(--accent-blue);">
+            <div id="actionModalContent">
+                <!-- Dynamically injected via JS -->
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="components.js"></script>
     <script src="script.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Dashboard typically hides components.js Navbar/Footer but we provide the logic
-            app.renderPatients();
-            app.initAnimations();
-        });
-    </script>
 </body>
 </html>
