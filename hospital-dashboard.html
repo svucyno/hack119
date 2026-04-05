@@ -48,9 +48,6 @@
             <ul class="sidebar-nav">
                 <li class="active" onclick="app.switchHospitalTab('patients')"><i class="fa-solid fa-users"></i> View
                     Patients</li>
-                <li onclick="app.switchHospitalTab('add')"><i class="fa-solid fa-user-plus"></i> Add Patient</li>
-                <li><i class="fa-solid fa-file-medical"></i> Reports</li>
-                <li><i class="fa-solid fa-prescription-bottle-medical"></i> Prescriptions</li>
                 <li><i class="fa-regular fa-calendar-check"></i> Appointments</li>
 
             </ul>
@@ -126,6 +123,14 @@
                                     <div class="input-group full-width">
                                         <label>Medical Details / Condition</label>
                                         <textarea id="apCondition" rows="3" required></textarea>
+                                    </div>
+                                    <div class="input-group full-width">
+                                        <label>Upload Reports</label>
+                                        <input type="file" id="apReports" accept=".pdf,.jpeg,.jpg,.png,.doc,.docx" multiple>
+                                    </div>
+                                    <div class="input-group full-width">
+                                        <label>Prescription</label>
+                                        <textarea id="apPrescription" rows="3" placeholder="Enter prescription details..."></textarea>
                                     </div>
                                 </div>
                                 <div class="form-actions mt-2">
