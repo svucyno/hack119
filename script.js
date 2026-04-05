@@ -88,11 +88,17 @@ const app = {
     },
 
     // --- HOSPITAL DASHBOARD ---
+    toggleSidebar: function() {
+        const sidebar = document.getElementById('hospitalSidebar');
+        if (sidebar) {
+            sidebar.classList.toggle('collapsed');
+        }
+    },
+
     switchHospitalTab: function(tabId) {
         // Update nav styling
         const navItems = document.querySelectorAll('#view-hospital-dashboard .sidebar-nav li');
         navItems.forEach(item => item.classList.remove('active'));
-        // Find by simple iteration or event logic (event logic is simple via click usually but here we hardcode mapping)
         event.currentTarget.classList.add('active');
 
         // Hide all tabs
@@ -102,34 +108,200 @@ const app = {
 
         // Show active
         document.getElementById(`hosp-tab-${tabId}`).classList.remove('hidden');
+
+        // Render doctor cards when that tab opens
+        if (tabId === 'doctors') {
+            this.renderDoctors();
+        }
     },
 
+    // --- DOCTOR DATA ---
+    doctors: [
+        { id: 1, name: 'Dr. Arjun Mehta',   specialty: 'Cardiologist',       icon: 'fa-heart-pulse',    status: 'available', patients: 8,  since: '08:00 AM', accent: '#38BDF8' },
+        { id: 2, name: 'Dr. Priya Sharma',   specialty: 'Neurologist',         icon: 'fa-brain',          status: 'busy',      patients: 5,  since: '09:30 AM', accent: '#A78BFA' },
+        { id: 3, name: 'Dr. Rajan Das',      specialty: 'Orthopedic Surgeon',  icon: 'fa-bone',           status: 'surgery',   patients: 3,  since: '07:00 AM', accent: '#FB7185' },
+        { id: 4, name: 'Dr. Nisha Kapoor',   specialty: 'Pediatrician',        icon: 'fa-child-reaching', status: 'available', patients: 12, since: '08:30 AM', accent: '#34D399' },
+        { id: 5, name: 'Dr. Samuel Okafor',  specialty: 'General Physician',   icon: 'fa-stethoscope',    status: 'offline',   patients: 0,  since: '—',        accent: '#64748B' },
+        { id: 6, name: 'Dr. Tanvi Reddy',    specialty: 'Ophthalmologist',     icon: 'fa-eye',            status: 'available', patients: 6,  since: '09:00 AM', accent: '#FBBF24' },
+        { id: 7, name: 'Dr. Kiran Bose',     specialty: 'Dermatologist',       icon: 'fa-hand-holding-medical', status: 'busy', patients: 4, since: '10:00 AM', accent: '#F472B6' },
+        { id: 8, name: 'Dr. Aditya Singh',   specialty: 'Radiologist',         icon: 'fa-radiation',      status: 'surgery',   patients: 2,  since: '06:30 AM', accent: '#EF4444' },
+    ],
+
+    statusLabels: {
+        available: '🟢 Available',
+        busy:      '🟡 Busy (Consultation)',
+        surgery:   '🔴 In Surgery',
+        offline:   '⚫ Offline',
+    },
+
+    renderDoctors: function() {
+        const grid = document.getElementById('doctorCardsGrid');
+        if (!grid) return;
+        grid.innerHTML = '';
+
+        this.doctors.forEach((doc, idx) => {
+            const labelText = this.statusLabels[doc.status] || doc.status;
+
+            const card = document.createElement('div');
+            card.className = 'doc-card';
+            card.dataset.status = doc.status;
+            card.style.setProperty('--card-accent', doc.accent);
+            card.style.transitionDelay = `${idx * 60}ms`;
+
+            card.innerHTML = `
+                <div class="doc-avatar-wrap">
+                    <div class="doc-avatar">
+                        <i class="fa-solid ${doc.icon}"></i>
+                    </div>
+                    <span class="doc-status-badge ${doc.status}" id="doc-badge-${doc.id}"></span>
+                </div>
+                <div class="doc-name">${doc.name}</div>
+                <div class="doc-specialty"><i class="fa-solid fa-circle-dot"></i>${doc.specialty}</div>
+                <div class="doc-meta">
+                    <span class="doc-meta-chip"><i class="fa-solid fa-users"></i> ${doc.patients} Patients</span>
+                    <span class="doc-meta-chip"><i class="fa-regular fa-clock"></i> Since ${doc.since}</span>
+                </div>
+                <div class="doc-status-display" id="doc-status-display-${doc.id}">
+                    <span class="status-dot ${doc.status}"></span>
+                    <span class="doc-status-label">${labelText}</span>
+                </div>
+            `;
+
+            grid.appendChild(card);
+
+            // Stagger entrance animation
+            requestAnimationFrame(() => {
+                setTimeout(() => card.classList.add('visible'), idx * 80);
+            });
+        });
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.doc-status-select-wrap')) {
+                document.querySelectorAll('.doc-dropdown.open').forEach(dd => dd.classList.remove('open'));
+                document.querySelectorAll('.doc-status-btn.open').forEach(btn => btn.classList.remove('open'));
+            }
+        }, { capture: true });
+    },
+
+    filterDoctors: function(status, clickedBtn) {
+        // Update active state on filter buttons
+        document.querySelectorAll('.doc-filter-btn').forEach(btn => btn.classList.remove('active'));
+        clickedBtn.classList.add('active');
+
+        // Show/hide cards with animation
+        const cards = document.querySelectorAll('#doctorCardsGrid .doc-card');
+        cards.forEach(card => {
+            const cardStatus = card.dataset.status;
+            if (status === 'all' || cardStatus === status) {
+                card.style.display = '';
+                requestAnimationFrame(() => card.classList.add('visible'));
+            } else {
+                card.classList.remove('visible');
+                // delay display:none until fade-out
+                setTimeout(() => {
+                    if (!card.classList.contains('visible')) card.style.display = 'none';
+                }, 400);
+            }
+        });
+    },
+
+
+    setDocStatus: function(docId, newStatus) {
+        const doc = this.doctors.find(d => d.id === docId);
+        if (!doc) return;
+        doc.status = newStatus;
+
+        // Update badge animation class
+        const badge = document.getElementById(`doc-badge-${docId}`);
+        const dot   = document.querySelector(`#doc-btn-${docId} .status-dot`);
+        const label = document.getElementById(`doc-label-${docId}`);
+
+        if (badge) badge.className = `doc-status-badge ${newStatus}`;
+        if (dot)   dot.className   = `status-dot ${newStatus}`;
+        if (label) label.textContent = this.statusLabels[newStatus];
+
+        // Update selected state in dropdown items
+        const dd = document.getElementById(`doc-dd-${docId}`);
+        if (dd) {
+            dd.querySelectorAll('.doc-dropdown-item').forEach(item => item.classList.remove('selected'));
+            const items = dd.querySelectorAll('.doc-dropdown-item');
+            const keys  = Object.keys(this.statusLabels);
+            const idx   = keys.indexOf(newStatus);
+            if (items[idx]) items[idx].classList.add('selected');
+        }
+
+        // Close dropdown
+        this.toggleDocDropdown(-1); // close all
+    },
+
+
     renderPatients: function() {
-        const tbody = document.getElementById('patientTableBody');
-        if (!tbody) return;
+        const container = document.getElementById('patientCardsContainer');
+        if (!container) return;
         
-        tbody.innerHTML = '';
+        container.innerHTML = '';
         const patients = this.getPatients();
         
         if (patients.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;">No patients registered</td></tr>`;
+            container.innerHTML = `<div style="text-align:center; grid-column: 1 / -1; padding: 2rem;">No patients registered</div>`;
             return;
         }
 
-        patients.forEach(p => {
+        patients.forEach((p, idx) => {
             const statusClass = p.status === 'Stable' ? 'stable' : 'critical';
-            const row = `
-                <tr>
-                    <td><strong>${p.id}</strong></td>
-                    <td>${p.name}</td>
-                    <td>${p.age} / ${p.gender.charAt(0)}</td>
-                    <td>${p.condition}</td>
-                    <td><span class="status ${statusClass}">${p.status}</span></td>
-                    <td><button class="btn-outline-sm">View details</button></td>
-                </tr>
+            
+            const mockReports = p.reports ? p.reports : "No reports uploaded.";
+            const mockPresc = p.prescription ? p.prescription : "No prescriptions issued yet.";
+
+            const card = document.createElement('div');
+            card.className = 'pat-card';
+            
+            card.innerHTML = `
+                <div class="pat-card-header" onclick="app.togglePatientSummary(${idx})">
+                    <div class="pat-avatar"><i class="fa-solid fa-hospital-user"></i></div>
+                    <div>
+                        <h4 style="color: var(--text-primary); margin:0;">${p.name}</h4>
+                        <small style="color: var(--text-secondary);">${p.id}</small>
+                    </div>
+                </div>
+                <!-- Initially hidden summary -->
+                <div class="pat-details" id="pat-summary-${idx}" style="display: none;">
+                    <p><strong>Name:</strong> <span>${p.name}</span></p>
+                    <p><strong>Age/Gender:</strong> <span>${p.age} / ${p.gender}</span></p>
+                    <p><strong>Status:</strong> <span class="status ${statusClass}">${p.status}</span></p>
+                    <div class="pat-actions">
+                        <button class="btn-outline-sm" onclick="app.togglePatientDetails(${idx})">View details</button>
+                    </div>
+                </div>
+                <!-- Initially hidden extended details -->
+                <div class="pat-extended-details" id="pat-ext-${idx}">
+                    <p style="margin-bottom:0.5rem; display:block;"><strong>Reports:</strong><br/> <span style="color:var(--text-light); font-size:0.9rem;">${mockReports}</span></p>
+                    <p style="display:block;"><strong>Prescription:</strong><br/> <span style="color:var(--text-light); font-size:0.9rem;">${mockPresc}</span></p>
+                </div>
             `;
-            tbody.innerHTML += row;
+            container.appendChild(card);
         });
+    },
+
+    togglePatientSummary: function(idx) {
+        const summary = document.getElementById('pat-summary-' + idx);
+        const ext = document.getElementById('pat-ext-' + idx);
+        if(summary.style.display === 'none') {
+            summary.style.display = 'block';
+        } else {
+            summary.style.display = 'none';
+            ext.style.display = 'none'; // hide extended too
+        }
+    },
+
+    togglePatientDetails: function(idx) {
+        const ext = document.getElementById('pat-ext-' + idx);
+        if(ext.style.display === 'none' || ext.style.display === '') {
+            ext.style.display = 'block';
+        } else {
+            ext.style.display = 'none';
+        }
     },
 
     addPatient: function() {
@@ -137,6 +309,9 @@ const app = {
         const age = document.getElementById('apAge').value;
         const gender = document.getElementById('apGender').value;
         const condition = document.getElementById('apCondition').value;
+        const reportsInput = document.getElementById('apReports');
+        const reports = reportsInput && reportsInput.files && reportsInput.files.length > 0 ? reportsInput.files[0].name : '';
+        const prescription = document.getElementById('apPrescription') ? document.getElementById('apPrescription').value : '';
         
         // simple validation
         if(!name || !age || !condition) return;
@@ -150,6 +325,8 @@ const app = {
             age: age,
             gender: gender,
             condition: condition,
+            reports: reports,
+            prescription: prescription,
             status: 'Stable' // default
         });
 
@@ -248,6 +425,20 @@ const app = {
         if (typeof lucide !== 'undefined') {
             lucide.createIcons();
         }
+
+        // Sidebar responsive auto-collapse
+        const handleResize = () => {
+            const sidebar = document.getElementById('hospitalSidebar');
+            if (sidebar) {
+                if (window.innerWidth < 1024) {
+                    sidebar.classList.add('collapsed');
+                } else {
+                    sidebar.classList.remove('collapsed');
+                }
+            }
+        };
+        window.addEventListener('resize', handleResize);
+        setTimeout(handleResize, 50); // initial check
 
         this.initSmoothScroll();
     },

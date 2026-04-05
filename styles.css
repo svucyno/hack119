@@ -1409,3 +1409,493 @@ button {
     }
 }
 
+/* Patient Grid System */
+.patient-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+    padding: 1rem;
+}
+
+.pat-card {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius-md);
+    padding: 1.5rem;
+    transition: var(--transition);
+}
+
+.pat-card:hover {
+    background: rgba(255,255,255,0.05);
+    border-color: var(--accent-blue);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+.pat-card-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+}
+
+.pat-avatar {
+    width: 45px; height: 45px; border-radius: 50%;
+    background: #1E293B;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--accent-blue);
+    font-size: 1.2rem;
+}
+
+.pat-details {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--glass-border);
+}
+
+.pat-details p {
+    margin: 0.5rem 0;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+.pat-actions {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: center;
+}
+
+.pat-actions button {
+    width: 100%;
+}
+
+.pat-extended-details {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: rgba(0,0,0,0.2);
+    border-radius: var(--border-radius-sm);
+    border-left: 3px solid var(--accent-blue);
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Sidebar Collapse Animation Styles */
+.sidebar {
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    z-index: 50;
+}
+
+.sidebar.collapsed {
+    width: 80px;
+}
+
+.sidebar.collapsed .nav-text {
+    display: none;
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sidebar-toggle {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: var(--border-radius-sm);
+    transition: var(--transition);
+}
+
+.sidebar-toggle:hover {
+    color: var(--accent-blue);
+    background: rgba(255,255,255,0.05);
+}
+
+.sidebar.collapsed .sidebar-toggle i {
+    transform: rotate(180deg);
+}
+
+.sidebar-nav li {
+    position: relative;
+}
+
+.nav-tooltip {
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-left: 10px;
+    background: var(--primary-blue-light);
+    color: var(--text-primary);
+    padding: 0.5rem 1rem;
+    border-radius: var(--border-radius-sm);
+    font-size: 0.85rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.2s ease-in-out;
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    z-index: 100;
+}
+
+.sidebar.collapsed .sidebar-nav li:hover .nav-tooltip {
+    opacity: 1;
+}
+
+.sidebar.collapsed .sidebar-nav li {
+    justify-content: center;
+    padding: 1rem;
+}
+
+.sidebar.collapsed .sidebar-nav li i {
+    margin: 0;
+    font-size: 1.3rem;
+}
+
+.sidebar.collapsed .sidebar-footer button {
+    padding: 1rem;
+    justify-content: center;
+}
+
+.nav-icon {
+    width: 24px;
+    text-align: center;
+}
+
+.sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+/* ==========================================
+   Doctor Availability Section
+   ========================================== */
+
+.doctor-avail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    padding: 1.5rem;
+}
+
+/* Doctor Card */
+.doc-card {
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.8));
+    border: 1px solid var(--glass-border);
+    border-radius: 18px;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.doc-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--card-accent, var(--accent-blue));
+    border-radius: 18px 18px 0 0;
+}
+
+.doc-card.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.doc-card:hover {
+    transform: translateY(-6px) scale(1.01);
+    border-color: rgba(56, 189, 248, 0.3);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 20px rgba(56,189,248,0.08);
+}
+
+/* Doctor Avatar */
+.doc-avatar-wrap {
+    position: relative;
+    width: 62px;
+    height: 62px;
+    margin-bottom: 1.2rem;
+}
+
+.doc-avatar {
+    width: 62px;
+    height: 62px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #1E293B, #0F172A);
+    border: 2px solid var(--glass-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: var(--accent-blue);
+    font-weight: 700;
+    overflow: hidden;
+}
+
+.doc-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+/* Pulsing Status Dot on Avatar */
+.doc-status-badge {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2.5px solid #0F172A;
+}
+
+.doc-status-badge.available { background: #10B981; }
+.doc-status-badge.busy      { background: #F59E0B; }
+.doc-status-badge.surgery   { background: #EF4444; }
+.doc-status-badge.offline   { background: #64748B; }
+
+/* Pulse ring for available */
+.doc-status-badge.available::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 2px solid #10B981;
+    animation: pulse-ring 1.8s ease-out infinite;
+}
+
+@keyframes pulse-ring {
+    0%   { transform: scale(0.8); opacity: 0.8; }
+    100% { transform: scale(1.8); opacity: 0; }
+}
+
+/* Busy blinking */
+.doc-status-badge.busy {
+    animation: blink-amber 1.2s ease-in-out infinite alternate;
+}
+@keyframes blink-amber {
+    from { opacity: 1; }
+    to   { opacity: 0.4; box-shadow: 0 0 6px #F59E0B; }
+}
+
+/* Surgery strobe */
+.doc-status-badge.surgery {
+    animation: strobe-red 0.8s ease-in-out infinite alternate;
+}
+@keyframes strobe-red {
+    from { opacity: 1; box-shadow: 0 0 0 #EF4444; }
+    to   { opacity: 0.5; box-shadow: 0 0 10px #EF4444; }
+}
+
+/* Doctor Info */
+.doc-name {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.2rem;
+}
+
+.doc-specialty {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    margin-bottom: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.doc-specialty i {
+    color: var(--accent-blue);
+    font-size: 0.75rem;
+}
+
+/* Status Selector Dropdown */
+.doc-status-select-wrap {
+    position: relative;
+}
+
+/* Static Status Display (replaces dropdown) */
+.doc-status-display {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.6rem 1rem;
+    border-radius: 10px;
+    border: 1px solid var(--glass-border);
+    background: rgba(255,255,255,0.04);
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.doc-status-label {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.doc-status-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem 1rem;
+    border-radius: 10px;
+    border: 1px solid var(--glass-border);
+    background: rgba(255,255,255,0.04);
+    cursor: pointer;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+    gap: 0.6rem;
+}
+
+.doc-status-btn:hover {
+    background: rgba(255,255,255,0.08);
+    border-color: rgba(56,189,248,0.3);
+}
+
+.doc-status-btn .status-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.status-dot.available { background: #10B981; }
+.status-dot.busy      { background: #F59E0B; }
+.status-dot.surgery   { background: #EF4444; }
+.status-dot.offline   { background: #64748B; }
+
+.doc-status-btn .chevron {
+    margin-left: auto;
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    transition: transform 0.25s ease;
+}
+
+.doc-status-btn.open .chevron {
+    transform: rotate(180deg);
+}
+
+/* Dropdown Panel */
+.doc-dropdown {
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 0; right: 0;
+    background: #1E293B;
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    overflow: hidden;
+    z-index: 200;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    opacity: 0;
+    transform: scaleY(0.85) translateY(6px);
+    transform-origin: bottom center;
+    pointer-events: none;
+    transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
+}
+
+.doc-dropdown.open {
+    opacity: 1;
+    transform: scaleY(1) translateY(0);
+    pointer-events: all;
+}
+
+.doc-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.doc-dropdown-item:hover {
+    background: rgba(255,255,255,0.06);
+    color: var(--text-primary);
+}
+
+.doc-dropdown-item.selected {
+    background: rgba(56,189,248,0.08);
+    color: var(--accent-blue);
+}
+
+/* Legend in header */
+.doc-legend {
+    display: flex;
+    gap: 1.2rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.doc-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.doc-filter-btn {
+    padding: 0.35rem 0.9rem;
+    border-radius: 50px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.25s ease;
+    user-select: none;
+}
+
+.doc-filter-btn:hover {
+    background: rgba(255,255,255,0.06);
+    border-color: var(--glass-border);
+    color: var(--text-primary);
+}
+
+.doc-filter-btn.active {
+    background: rgba(56, 189, 248, 0.12);
+    border-color: var(--accent-blue);
+    color: var(--accent-blue);
+    font-weight: 600;
+}
+
+
+/* Meta row: patients & availability time */
+.doc-meta {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    margin-top: 0.4rem;
+    flex-wrap: wrap;
+}
+
+.doc-meta-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.78rem;
+    color: var(--text-light);
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--glass-border);
+    border-radius: 50px;
+    padding: 0.25rem 0.7rem;
+}
+
+.doc-meta-chip i {
+    color: var(--accent-blue);
+    font-size: 0.7rem;
+}
+
