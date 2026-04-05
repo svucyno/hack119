@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Dashboard - HealthNexus</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="dashboard-body">
+    <div id="navbar-placeholder"></div>
+
+    <section id="view-hospital-dashboard" class="dashboard-section">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fa-solid fa-hospital-user"></i> Hospital</h2>
+            </div>
+            <ul class="sidebar-nav">
+                <li class="active" onclick="app.switchHospitalTab('patients')"><i class="fa-solid fa-users"></i> View
+                    Patients</li>
+                <li onclick="app.switchHospitalTab('add')"><i class="fa-solid fa-user-plus"></i> Add Patient</li>
+                <li><i class="fa-solid fa-file-medical"></i> Reports</li>
+                <li><i class="fa-solid fa-prescription-bottle-medical"></i> Prescriptions</li>
+                <li><i class="fa-regular fa-calendar-check"></i> Appointments</li>
+            </ul>
+            <div class="sidebar-footer">
+                <button onclick="app.logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+            </div>
+        </aside>
+        <main class="dashboard-content">
+            <header class="dash-header">
+                <h1>Hospital Dashboard</h1>
+                <div class="user-profile">
+                    <span>Dr. Admin</span>
+                    <div class="avatar"><i class="fa-solid fa-user-doctor"></i></div>
+                </div>
+            </header>
+
+            <div class="dash-body">
+                <!-- Patient List View -->
+                <div id="hosp-tab-patients" class="tab-content active">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Registered Patients</h3>
+                            <button class="btn-primary-sm" onclick="app.switchHospitalTab('add')">New Patient</button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                        <th>Age/Gender</th>
+                                        <th>Latest Condition</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="patientTableBody">
+                                    <!-- Populated via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add Patient View -->
+                <div id="hosp-tab-add" class="tab-content hidden">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Register New Patient</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="addPatientForm" onsubmit="event.preventDefault(); app.addPatient();">
+                                <div class="form-grid">
+                                    <div class="input-group">
+                                        <label>Full Name</label>
+                                        <input type="text" id="apName" required>
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Age</label>
+                                        <input type="number" id="apAge" required>
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Gender</label>
+                                        <select id="apGender" required>
+                                            <option value="Male">Male</option>
+                                            <option value="Female">Female</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                    </div>
+                                    <div class="input-group full-width">
+                                        <label>Medical Details / Condition</label>
+                                        <textarea id="apCondition" rows="3" required></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-actions mt-2">
+                                    <button type="submit" class="btn-primary">Save Patient Record</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </section>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="components.js"></script>
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Dashboard typically hides components.js Navbar/Footer but we provide the logic
+            app.renderPatients();
+            app.initAnimations();
+        });
+    </script>
+</body>
+</html>
