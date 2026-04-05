@@ -75,16 +75,25 @@ const app = {
     },
 
     login: function(role) {
+        // Save auth state
+        localStorage.setItem('nexus_user_role', role);
+        
         if(role === 'hospital') {
             this.navigate('hospital-dashboard');
-            this.renderPatients();
+            if (typeof this.renderPatients === 'function') this.renderPatients();
         } else if (role === 'patient') {
             this.navigate('patient-dashboard');
         }
     },
 
     logout: function() {
+        // Clear auth state
+        localStorage.removeItem('nexus_user_role');
         this.navigate('home');
+    },
+
+    getAuthRole: function() {
+        return localStorage.getItem('nexus_user_role');
     },
 
     // --- HOSPITAL DASHBOARD ---
