@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Portal - HealthNexus</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="dashboard-body">
+    <div id="navbar-placeholder"></div>
+
+    <section id="view-patient-dashboard" class="dashboard-section">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fa-solid fa-heart-pulse"></i> MyHealth</h2>
+            </div>
+            <ul class="sidebar-nav">
+                <li class="active" onclick="app.switchPatientTab('overview')"><i
+                        class="fa-solid fa-house-chimney-medical"></i> Overview</li>
+                <li onclick="app.switchPatientTab('assistant')"><i class="fa-solid fa-robot"></i> AI Assistant</li>
+                <li><i class="fa-solid fa-calendar-day"></i> Appointments</li>
+                <li><i class="fa-solid fa-hand-holding-droplet"></i> Blood Donation</li>
+                <li><i class="fa-solid fa-users-viewfinder"></i> Family Connect</li>
+            </ul>
+            <div class="sidebar-footer">
+                <button onclick="app.logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+            </div>
+        </aside>
+        <main class="dashboard-content">
+            <header class="dash-header">
+                <h1>Patient Portal</h1>
+                <button class="btn-danger heartbeat-btn" onclick="app.triggerSOS()"><i
+                        class="fa-solid fa-truck-medical"></i> SOS EMERGENCY</button>
+            </header>
+
+            <div class="dash-body">
+                <!-- Overview Tab -->
+                <div id="pat-tab-overview" class="tab-content active">
+                    <!-- Profile Row -->
+                    <div class="patient-metrics-grid">
+                        <div class="card profile-card">
+                            <div class="avatar-large"><i class="fa-solid fa-user"></i></div>
+                            <div class="profile-info">
+                                <h3>John Doe</h3>
+                                <p>ID: NEX-8241</p>
+                                <p class="text-sm">Age: 34 | Blood: O+</p>
+                            </div>
+                        </div>
+
+                        <div class="card metric-card">
+                            <div class="metric-icon"><i class="fa-solid fa-heart-circle-bolt"></i></div>
+                            <div class="metric-data">
+                                <span class="metric-label">Heart Rate</span>
+                                <span class="metric-value">72 <small>bpm</small></span>
+                            </div>
+                        </div>
+
+                        <div class="card metric-card">
+                            <div class="metric-icon"><i class="fa-solid fa-droplet"></i></div>
+                            <div class="metric-data">
+                                <span class="metric-label">Blood Pressure</span>
+                                <span class="metric-value">120/80</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Health tracking and Reminders -->
+                    <div class="dashboard-grid-2 mt-2">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Daily Health Progress</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="progress-wrapper">
+                                    <div class="progress-details">
+                                        <span>Steps (8,432 / 10,000)</span>
+                                        <span>84%</span>
+                                    </div>
+                                    <div class="progress-bar-bg">
+                                        <div class="progress-bar-fill" style="width: 84%;"></div>
+                                    </div>
+                                </div>
+                                <div class="progress-wrapper mt-1">
+                                    <div class="progress-details">
+                                        <span>Water Intake (1.5L / 2L)</span>
+                                        <span>75%</span>
+                                    </div>
+                                    <div class="progress-bar-bg">
+                                        <div class="progress-bar-fill blue" style="width: 75%;"></div>
+                                    </div>
+                                </div>
+                                <div class="progress-wrapper mt-1">
+                                    <div class="progress-details">
+                                        <span>Sleep (6h / 8h)</span>
+                                        <span>75%</span>
+                                    </div>
+                                    <div class="progress-bar-bg">
+                                        <div class="progress-bar-fill purple" style="width: 75%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Action Items</h3>
+                            </div>
+                            <div class="card-body">
+                                <ul class="reminder-list">
+                                    <li class="reminder-item critical">
+                                        <div class="rem-icon"><i class="fa-solid fa-pills"></i></div>
+                                        <div class="rem-text">
+                                            <strong>Amoxicillin 500mg</strong>
+                                            <p>Take with food - 12:00 PM</p>
+                                        </div>
+                                        <button class="btn-outline-sm">Mark Done</button>
+                                    </li>
+                                    <li class="reminder-item update">
+                                        <div class="rem-icon"><i class="fa-solid fa-video"></i></div>
+                                        <div class="rem-text">
+                                            <strong>Virtual Consult: Dr. Smith</strong>
+                                            <p>Internal Medicine - Today 2:30 PM</p>
+                                        </div>
+                                        <button class="btn-primary-sm">Join</button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Services -->
+                    <div class="card mt-2">
+                        <div class="card-header">
+                            <h3>Online Services & Nearby Facilities</h3>
+                        </div>
+                        <div class="card-body services-badges">
+                            <span class="badge-service"><i class="fa-solid fa-pills"></i> Order Medicines</span>
+                            <span class="badge-service"><i class="fa-solid fa-flask"></i> Book Lab Test</span>
+                            <span class="badge-service"><i class="fa-solid fa-location-dot"></i> Nearby
+                                Pharmacies</span>
+                            <span class="badge-service"><i class="fa-solid fa-microscope"></i> Diagnostic Centers</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Assistant Tab -->
+                <div id="pat-tab-assistant" class="tab-content hidden">
+                    <div class="card chat-card">
+                        <div class="card-header">
+                            <h3><i class="fa-solid fa-robot"></i> HealthNexus AI Assistant</h3>
+                            <p class="text-sm">Ask me about your symptoms, medications, or scheduling.</p>
+                        </div>
+                        <div class="chat-window" id="chatWindow">
+                            <div class="chat-message bot">
+                                <div class="msg-bubble">
+                                    Hello! I'm your Nexus Assistant. How can I help you today?
+                                </div>
+                            </div>
+                        </div>
+                        <form id="chatForm" class="chat-input-area"
+                            onsubmit="event.preventDefault(); app.handleChat();">
+                            <input type="text" id="chatInput" placeholder="Type your health question..." required
+                                autocomplete="off">
+                            <button type="submit" class="btn-primary"><i class="fa-solid fa-paper-plane"></i></button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </section>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="components.js"></script>
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+             app.initAnimations();
+        });
+    </script>
+</body>
+</html>
