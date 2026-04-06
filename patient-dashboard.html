@@ -417,7 +417,23 @@
     .mbtn-cancel  { background: var(--glass); color: var(--text); border: 1px solid var(--border); }
     .mbtn-cancel:hover { background: rgba(255,255,255,0.09); }
 
+
+    /* ── LOGOUT BUTTON ── */
+    .sb-logout {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 12px; border-radius: 10px; margin-top: 8px;
+      background: rgba(255,77,109,0.08); border: 1px solid rgba(255,77,109,0.2);
+      color: var(--danger); font-size: 0.8rem; font-weight: 600;
+      cursor: pointer; transition: all var(--ease);
+      text-decoration: none; width: 100%;
+    }
+    .sb-logout:hover { background: rgba(255,77,109,0.18); border-color: rgba(255,77,109,0.4); }
+    .sb-logout .ni { width: 18px; text-align: center; }
+
+    /* ── TOAST ── */
+
     /*  TOAST  */
+
     #toast {
       position: fixed; bottom: 26px; right: 26px;
       background: var(--bg2); border: 1px solid var(--border);
@@ -429,7 +445,360 @@
       z-index: 1000; backdrop-filter: blur(12px);
     }
 
+
+    /* ══════════════════════════════════════════
+       APPOINTMENTS SECTION — full redesign
+    ══════════════════════════════════════════ */
+    .section-view {
+      display: none; flex: 1; flex-direction: column;
+      overflow: hidden; background: var(--bg);
+    }
+    .section-view.active { display: flex; }
+
+    /* Dedicated topbar for appointments */
+    .appt-topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 32px; flex-shrink: 0;
+      border-bottom: 1px solid var(--border);
+      background: rgba(11,15,26,0.95);
+      backdrop-filter: blur(12px);
+    }
+    .appt-topbar-left { display: flex; align-items: center; gap: 12px; }
+    .appt-topbar-icon {
+      width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex; align-items: center; justify-content: center; font-size: 0.9rem;
+    }
+    .appt-topbar-text h2 { font-size: 1.1rem; font-weight: 700; line-height: 1.2; }
+    .appt-topbar-text p  { font-size: 0.73rem; color: var(--muted); margin-top: 2px; }
+    .appt-topbar-right { display: flex; align-items: center; gap: 10px; }
+
+    /* Scrollable body — flex column so content can justify */
+    .appt-scroll {
+      flex: 1; overflow-y: auto;
+      display: flex; justify-content: center; align-items: flex-start;
+      padding: 36px 32px;
+    }
+
+    /* Max-width centred container */
+    .appt-container {
+      width: 100%; max-width: 1200px;
+      display: flex; flex-direction: column; gap: 20px;
+    }
+
+    /* Two-column grid: 3:2 (60:40) */
+    .appt-grid {
+      display: grid;
+      grid-template-columns: 3fr 2fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    /* Panel cards */
+    .appt-panel {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      backdrop-filter: blur(16px);
+      overflow: hidden;
+    }
+    .appt-panel-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 22px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .appt-panel-title {
+      font-size: 0.72rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 1.1px;
+      color: var(--muted); display: flex; align-items: center; gap: 8px;
+    }
+    .appt-panel-title i { font-size: 0.85rem; }
+    .appt-count-badge {
+      font-size: 0.67rem; font-weight: 700; padding: 3px 11px; border-radius: 99px;
+      background: rgba(108,99,255,0.15); color: var(--accent);
+      border: 1px solid rgba(108,99,255,0.25);
+    }
+
+    /* Appointment list */
+    .appt-list { display: flex; flex-direction: column; gap: 10px; padding: 16px 18px 20px; }
+    .appt-item {
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 16px; border-radius: 12px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      transition: all var(--ease); min-width: 0;
+    }
+    .appt-item:hover {
+      background: rgba(255,255,255,0.06);
+      border-color: rgba(255,255,255,0.14);
+      transform: translateX(3px);
+    }
+    .appt-ico {
+      width: 44px; height: 44px; border-radius: 11px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; font-size: 1.05rem;
+    }
+    .appt-ico.virtual  { background: rgba(108,99,255,0.2); color: var(--accent); }
+    .appt-ico.inperson { background: rgba(0,212,170,0.18); color: var(--accent2); }
+    .appt-info { flex: 1; min-width: 0; }
+    .appt-doc {
+      font-size: 0.9rem; font-weight: 600; color: var(--text);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .appt-meta {
+      font-size: 0.74rem; color: var(--muted); margin-top: 4px;
+      display: flex; align-items: center; gap: 5px; white-space: nowrap;
+    }
+    .appt-badge {
+      font-size: 0.66rem; font-weight: 700;
+      padding: 4px 11px; border-radius: 99px;
+      flex-shrink: 0;
+    }
+    .badge-virtual  { background: rgba(108,99,255,0.15); color: var(--accent);  border: 1px solid rgba(108,99,255,0.28); }
+    .badge-inperson { background: rgba(0,212,170,0.12);  color: var(--accent2); border: 1px solid rgba(0,212,170,0.26); }
+    .badge-done     { background: rgba(100,116,139,0.13); color: var(--muted);  border: 1px solid rgba(100,116,139,0.2); }
+
+    /* Booking form */
+    .book-form { display: flex; flex-direction: column; gap: 14px; padding: 16px 20px 22px; }
+    .type-toggle { display: flex; gap: 10px; }
+    .type-btn {
+      flex: 1; padding: 10px 8px; border-radius: 10px; cursor: pointer;
+      border: 1px solid var(--border); background: rgba(255,255,255,0.03);
+      color: var(--muted); font-size: 0.82rem; font-weight: 600;
+      display: flex; align-items: center; justify-content: center; gap: 7px;
+      transition: all var(--ease); font-family: 'Inter', sans-serif;
+    }
+    .type-btn:not(.selected):hover { border-color: rgba(255,255,255,0.16); color: var(--text); }
+    .type-btn.selected.virtual  { background: rgba(108,99,255,0.18); border-color: var(--accent);  color: var(--accent); }
+    .type-btn.selected.inperson { background: rgba(0,212,170,0.15);  border-color: var(--accent2); color: var(--accent2); }
+    .form-group { display: flex; flex-direction: column; gap: 7px; }
+    .form-label { font-size: 0.68rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+    .form-input, .form-select {
+      width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+      color: var(--text); padding: 10px 13px; border-radius: 9px;
+      font-size: 0.86rem; font-family: 'Inter', sans-serif;
+      transition: all var(--ease); outline: none;
+      -webkit-appearance: none; appearance: none;
+    }
+    .form-input::placeholder { color: var(--muted); opacity: 0.7; }
+    .form-input:focus, .form-select:focus {
+      border-color: var(--accent); background: rgba(108,99,255,0.07);
+      box-shadow: 0 0 0 3px rgba(108,99,255,0.13);
+    }
+    .form-select { cursor: pointer; }
+    .form-select option { background: #151d2e; color: var(--text); }
+    .form-input[type="date"] { color-scheme: dark; }
+    .book-btn {
+      margin-top: 4px; padding: 12px; border-radius: 10px; border: none;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff; font-size: 0.88rem; font-weight: 700;
+      cursor: pointer; transition: all var(--ease);
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      font-family: 'Inter', sans-serif;
+    }
+    .book-btn:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 8px 28px rgba(108,99,255,0.38); }
+    .empty-state {
+      text-align: center; padding: 40px 20px; color: var(--muted); font-size: 0.85rem;
+    }
+    .empty-state i { font-size: 2.2rem; margin-bottom: 12px; display: block; opacity: 0.5; }
+
+    /* ── RESPONSIVE ── */
+    /* ── EMERGENCY SOS VIEW — dark theme ── */
+    .sos-view {
+      display: none; flex: 1; flex-direction: column; overflow: hidden;
+      background: var(--bg);
+    }
+    .sos-view.active { display: flex; }
+
+    /* Topbar */
+    .sos-topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 32px; flex-shrink: 0;
+      border-bottom: 1px solid var(--border);
+      background: rgba(11,15,26,0.95);
+      backdrop-filter: blur(12px);
+    }
+    .sos-topbar-title {
+      font-size: 1.05rem; font-weight: 700;
+      color: var(--text); display: flex; align-items: center; gap: 10px;
+      cursor: pointer; text-decoration: none;
+      transition: color var(--ease);
+    }
+    .sos-topbar-title:hover { color: var(--accent2); }
+    .sos-topbar-title .sos-back-hint {
+      font-size: 0.68rem; font-weight: 500; color: var(--muted);
+      margin-left: 4px; opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .sos-topbar-title:hover .sos-back-hint { opacity: 1; }
+    .sos-topbar-title i { color: var(--danger); font-size: 1rem; }
+    .sos-topbar-right { display: flex; align-items: center; gap: 10px; }
+
+    /* Body */
+    .sos-body {
+      flex: 1; overflow-y: auto;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 40px 24px; gap: 32px;
+    }
+
+    /* Pulsing ring — kept red for emergency visibility */
+    .sos-ring-wrap {
+      position: relative;
+      width: 240px; height: 240px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .sos-ring-wrap::before, .sos-ring-wrap::after {
+      content: '';
+      position: absolute; border-radius: 50%;
+      background: rgba(231,76,60,0.15);
+      animation: sos-pulse 2.2s ease-out infinite;
+    }
+    .sos-ring-wrap::before { width: 100%; height: 100%; animation-delay: 0s; }
+    .sos-ring-wrap::after  { width: 80%;  height: 80%;  animation-delay: 0.55s; }
+    @keyframes sos-pulse {
+      0%   { transform: scale(0.85); opacity: 0.8; }
+      70%  { transform: scale(1.05); opacity: 0.2; }
+      100% { transform: scale(0.85); opacity: 0.8; }
+    }
+    .sos-big-btn {
+      position: relative; z-index: 2;
+      width: 148px; height: 148px; border-radius: 50%; border: none;
+      background: linear-gradient(145deg, #e74c3c, #c0392b);
+      box-shadow: 0 8px 40px rgba(231,76,60,0.55), 0 0 0 3px rgba(231,76,60,0.25);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 6px;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .sos-big-btn:hover { transform: scale(1.06); box-shadow: 0 14px 52px rgba(231,76,60,0.7), 0 0 0 3px rgba(231,76,60,0.35); }
+    .sos-big-btn:active { transform: scale(0.97); }
+    .sos-big-btn i { font-size: 2rem; color: #fff; }
+    .sos-big-btn .sos-label { font-size: 1.3rem; font-weight: 800; color: #fff; letter-spacing: 2px; }
+    .sos-big-btn .sos-sub   { font-size: 0.72rem; color: rgba(255,255,255,0.8); font-weight: 500; }
+
+    /* Description */
+    .sos-desc {
+      font-size: 0.92rem; color: var(--muted); text-align: center; max-width: 460px;
+      line-height: 1.75;
+    }
+    .sos-desc strong { color: var(--accent2); font-weight: 600; }
+
+    /* Action cards — glassmorphism */
+    .sos-actions { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+    .sos-card {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 22px 32px;
+      min-width: 148px; text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      backdrop-filter: blur(12px);
+    }
+    .sos-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(231,76,60,0.4);
+      background: rgba(231,76,60,0.07);
+      box-shadow: 0 8px 28px rgba(231,76,60,0.18);
+    }
+    .sos-card:active { transform: translateY(0); }
+    .sos-card i { font-size: 1.5rem; color: var(--danger); display: block; margin-bottom: 10px; }
+    .sos-card-name { font-size: 0.88rem; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+    .sos-card-sub  { font-size: 0.74rem; color: var(--muted); }
+
+    /* SOS button in topbar */
+    .tb-sos {
+      width: 38px; height: 38px; border-radius: 10px;
+      background: rgba(231,76,60,0.12); border: 1.5px solid rgba(231,76,60,0.3);
+      color: #e74c3c; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: all var(--ease); font-size: 0.85rem;
+      animation: sos-glow 2s ease-in-out infinite;
+    }
+    .tb-sos:hover { background: rgba(231,76,60,0.22); border-color: rgba(231,76,60,0.55); }
+    @keyframes sos-glow {
+      0%,100% { box-shadow: 0 0 0 0   rgba(231,76,60,0.45); }
+      50%      { box-shadow: 0 0 0 7px rgba(231,76,60,0); }
+    }
+    /* ── FAMILY CONNECT VIEW ── */
+    .family-view {
+      display: none; flex: 1; flex-direction: column; overflow: hidden;
+      background: var(--bg);
+    }
+    .family-view.active { display: flex; }
+    .fam-topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 32px; border-bottom: 1px solid var(--border);
+      background: rgba(11,15,26,0.95); backdrop-filter: blur(12px);
+    }
+    .fam-topbar-title {
+      font-size: 1.1rem; font-weight: 700; color: var(--text);
+      display: flex; align-items: center; gap: 12px;
+    }
+    .fam-topbar-title i { color: #3498db; }
+    .fam-scroll { flex: 1; overflow-y: auto; padding: 24px 32px; }
+    .fam-container { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
+    
+    /* Profile Header */
+    .fam-profile-card {
+      background: var(--glass); border: 1px solid var(--border); border-radius: 20px;
+      padding: 24px; display: flex; align-items: center; gap: 24px;
+      backdrop-filter: blur(12px);
+    }
+    .fam-av-big {
+      width: 80px; height: 80px; border-radius: 20px;
+      background: linear-gradient(135deg, #3498db, #2ecc71);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; font-weight: 800; color: #fff;
+    }
+    .fam-info h2 { font-size: 1.5rem; color: var(--text); margin-bottom: 4px; }
+    .fam-meta { display: flex; gap: 16px; color: var(--muted); font-size: 0.88rem; }
+    .fam-meta span { display: flex; align-items: center; gap: 6px; }
+    .status-badge {
+      margin-left: auto; padding: 8px 16px; border-radius: 50px;
+      font-size: 0.82rem; font-weight: 700; display: flex; align-items: center; gap: 8px;
+    }
+    .sb-stable { background: rgba(46,204,113,0.15); color: #2ecc71; border: 1px solid rgba(46,204,113,0.3); }
+
+    /* Grid layouts */
+    .fam-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 24px; }
+    .fam-card {
+      background: var(--glass); border: 1px solid var(--border); border-radius: 18px;
+      padding: 22px; display: flex; flex-direction: column; gap: 16px;
+      transition: all 0.2s ease;
+    }
+    .fam-card:hover { transform: translateY(-3px); border-color: rgba(52,152,219,0.4); }
+    .fam-card-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+    .fam-card-title { font-size: 0.95rem; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 10px; }
+    .fam-card-title i { color: #3498db; }
+    
+    /* Lists inside cards */
+    .fam-list { display: flex; flex-direction: column; gap: 12px; }
+    .fam-item {
+      padding: 12px; background: rgba(255,255,255,0.03); border-radius: 12px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .fam-item i { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; }
+    .fi-blue { background: rgba(52,152,219,0.1); color: #3498db; }
+    .fi-green { background: rgba(46,204,113,0.1); color: #2ecc71; }
+    .fi-purple { background: rgba(108,99,255,0.1); color: #6c63ff; }
+    
+    .item-main { flex: 1; }
+    .item-name { font-size: 0.88rem; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+    .item-sub { font-size: 0.74rem; color: var(--muted); }
+
+    /* Health Status Card */
+    .health-status-wrap { text-align: center; padding: 10px 0; }
+    .health-status-value { font-size: 2.2rem; font-weight: 800; color: #2ecc71; margin-bottom: 8px; }
+    .health-status-desc { font-size: 0.85rem; color: var(--muted); max-width: 280px; margin: 0 auto; line-height: 1.5; }
+
+    @media (max-width: 1020px) {
+      .appt-grid { grid-template-columns: 1fr; }
+      .fam-grid { grid-template-columns: 1fr; }
+      .appt-scroll { padding: 24px 20px; }
+    }
+
     /*  RESPONSIVE  */
+
     @media (max-width: 900px) {
       .g3  { grid-template-columns: repeat(2,1fr); }
       .row { flex-direction: column; }
@@ -438,9 +807,12 @@
     @media (max-width: 640px) {
       :root { --sidebar-w: 58px; }
       .sb-logo span, .sb-nav li span:not(.ni),
-      .sb-user-name, .sb-user-role, .sb-label { display: none; }
+      .sb-user-name, .sb-user-role, .sb-label, .sb-logout span { display: none; }
       .sb-nav li { justify-content: center; padding: 12px; }
+      .sb-logout { justify-content: center; }
       .g3  { grid-template-columns: 1fr; }
+      .appt-scroll { padding: 16px 10px; }
+      .sos-actions { flex-direction: column; align-items: center; }
     }
     /*  VIEW SWITCH  */
     .dash-view { display: none; height: 100%; width: 100%; overflow: hidden; }
@@ -563,11 +935,20 @@
         <i class="fa-solid fa-power-off"></i>
       </div>
     </div>
+    <a href="index.html" class="sb-logout" id="logoutBtn" title="Logout">
+      <span class="ni"><i class="fa-solid fa-right-from-bracket"></i></span>
+      <span>Logout</span>
+    </a>
   </div>
 </aside>
 
+
+<!-- ═══════════════ MAIN ═══════════════ -->
+<div class="main" id="mainContainer">
+=======
 <!--  MAIN  -->
 <div class="main">
+
 
   <!-- TOPBAR -->
   <header class="topbar">
@@ -579,6 +960,9 @@
       <div class="tb-btn" title="Notifications">
         <i class="fa-solid fa-bell"></i>
         <div class="tb-badge">2</div>
+      </div>
+      <div class="tb-sos" title="Emergency SOS" onclick="showView(5)" id="dashSosBtn">
+        <i class="fa-solid fa-truck-medical"></i>
       </div>
       <div class="tb-btn" title="Search"><i class="fa-solid fa-magnifying-glass"></i></div>
       <div class="tb-btn" title="Logout" onclick="if(window.app && app.logout){app.logout();}else{window.location.href='index.html'}" style="color:var(--danger); border-color:rgba(255,77,109,0.3);">
@@ -718,7 +1102,11 @@
       <div class="card-head">
         <span class="card-title">
           <i class="fa-solid fa-chart-line" style="margin-right:6px;color:var(--accent)"></i>
+
+          Vital Trends — Last 4 Weeks
+
           Vital Trends  Last 7 Days
+
         </span>
         <div class="gtab-row">
           <button class="gtab active" onclick="switchChart('bp',this)">BP (Systolic)</button>
@@ -796,6 +1184,25 @@
       </div>
     </div>
 
+
+
+
+  </div><!-- /dash-scroll -->
+</div><!-- /dashboard-view -->
+
+<!-- ═══════════════ FAMILY CONNECT SECTION ═══════════════ -->
+<div class="family-view" id="familyConnectView">
+  
+  <div class="fam-topbar">
+    <div class="fam-topbar-title">
+      <i class="fa-solid fa-users-viewfinder"></i>
+      Family Access Dashboard
+    </div>
+    <div class="appt-topbar-right">
+      <div class="tb-btn" title="Notifications">
+        <i class="fa-solid fa-bell"></i>
+        <div class="tb-badge">2</div>
+
     <!--  ROW 4: HEALTH STORY  -->
     <div class="card">
       <div class="card-head">
@@ -815,8 +1222,48 @@
           confirming the absence of anaemia. The combined health risk score of <mark>78/100 reflects a Low-Risk profile</mark>,
           but proactive management of blood sugar is strongly advised.
         </p>
+
       </div>
+      <div class="tb-av">JD</div>
     </div>
+  </div>
+
+
+  <div class="fam-scroll">
+    <div class="fam-container">
+
+      <!-- Active Family Member Session -->
+      <div class="fam-item" style="background:rgba(52,152,219,0.08); border:1px dashed rgba(52,152,219,0.3); border-radius:15px; padding:15px 24px; margin-bottom:10px;">
+        <div style="display:flex; align-items:center; gap:14px; width:100%;">
+          <div style="width:42px; height:42px; border-radius:50%; background:#3498db; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:700;">JD</div>
+          <div style="flex:1;">
+            <div style="font-size:0.75rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:2px;">Connected Family Member</div>
+            <div style="font-size:1rem; font-weight:700; color:var(--text);">Jane Doe <span style="font-weight:400; font-size:0.85rem; color:#3498db; margin-left:8px;">(Spouse)</span></div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:0.68rem; color:var(--muted); margin-bottom:2px;">ACCESS LEVEL</div>
+            <div style="font-size:0.78rem; font-weight:700; color:#2ecc71; display:flex; align-items:center; gap:5px; justify-content:flex-end;">
+              <i class="fa-solid fa-shield-check"></i> FULL ACCESS
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Patient Profile Header -->
+      <div class="fam-profile-card">
+        <div class="fam-av-big">JD</div>
+        <div class="fam-info">
+          <h2>John Doe</h2>
+          <div class="fam-meta">
+            <span><i class="fa-solid fa-id-card"></i> NEX-8241</span>
+            <span><i class="fa-solid fa-user"></i> 34 Years</span>
+            <span><i class="fa-solid fa-location-dot"></i> New York, USA</span>
+          </div>
+        </div>
+        <div class="status-badge sb-stable">
+          <i class="fa-solid fa-circle-check"></i>
+          Overall Health: STABLE
+        </div>
 
     <!--  ROW 5: QUICK ACTIONS  -->
     <div class="card">
@@ -825,12 +1272,93 @@
           <i class="fa-solid fa-bolt" style="margin-right:6px;color:var(--warn)"></i>
           Quick Actions
         </span>
+
       </div>
-      <div class="qa-grid">
-        <div class="qa-btn qa-sos" id="sosBtn" onclick="openSOS()">
-          <div class="qa-icon"><i class="fa-solid fa-truck-medical"></i></div>
-          <span>SOS Emergency</span>
+
+      <!-- Health Data Grid -->
+      <div class="fam-grid">
+        
+        <!-- Medical Reports -->
+        <div class="fam-card">
+          <div class="fam-card-head">
+            <span class="fam-card-title"><i class="fa-solid fa-file-medical"></i> Medical Reports</span>
+          </div>
+          <div class="fam-list" id="famReportsList">
+            <!-- Dynamically populated -->
+            <div class="empty-state" style="padding:10px 0;"><i class="fa-solid fa-folder-open"></i> No recent reports</div>
+          </div>
         </div>
+
+        <!-- Medicines -->
+        <div class="fam-card">
+          <div class="fam-card-head">
+            <span class="fam-card-title"><i class="fa-solid fa-pills"></i> Current Medicines</span>
+          </div>
+          <div class="fam-list" id="famMedsList">
+            <!-- Dynamically populated -->
+            <div class="empty-state" style="padding:10px 0;"><i class="fa-solid fa-capsules"></i> No active prescriptions</div>
+          </div>
+        </div>
+
+        <!-- Health Summary -->
+        <div class="fam-card">
+          <div class="fam-card-head">
+            <span class="fam-card-title"><i class="fa-solid fa-heart-pulse"></i> Health Summary</span>
+          </div>
+          <div class="insight-inner" style="padding:0;">
+            <p class="insight-text" id="famHealthSummary" style="font-size:0.85rem; line-height:1.6;">
+              Patient vitals (BP, Sugar, Hemoglobin) are monitored daily. Overall health score is 78/100.
+              No critical alerts at this time.
+            </p>
+          </div>
+        </div>
+
+
+        <!-- Appointments -->
+        <div class="fam-card">
+          <div class="fam-card-head">
+            <span class="fam-card-title"><i class="fa-solid fa-calendar-check"></i> Appointments</span>
+          </div>
+          <div class="fam-list" id="famApptList">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- Daily Reminders -->
+        <div class="fam-card">
+          <div class="fam-card-head">
+            <span class="fam-card-title"><i class="fa-solid fa-clipboard-list"></i> Daily Reminders</span>
+          </div>
+          <div class="fam-list" id="famRemindersList">
+            <div class="fam-item">
+              <i class="fa-solid fa-droplet fi-blue"></i>
+              <div class="item-main">
+                <div class="item-name">Hydration Check</div>
+                <div class="item-sub">Drink 3L water daily</div>
+              </div>
+            </div>
+            <div class="fam-item">
+              <i class="fa-solid fa-walking fi-green"></i>
+              <div class="item-main">
+                <div class="item-name">Light Exercise</div>
+                <div class="item-sub">20 min morning walk</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Overall Status Details -->
+        <div class="fam-card">
+          <div class="fam-card-head">
+            <span class="fam-card-title"><i class="fa-solid fa-gauge-high"></i> Status Insights</span>
+          </div>
+          <div class="health-status-wrap">
+            <div class="health-status-value">STABLE</div>
+            <div class="health-status-desc">
+              All clinical parameters are within acceptable ranges. Next major check-up in 10 days.
+            </div>
+          </div>
+
         <div class="qa-btn qa-appt" onclick="switchPatView('appointments')">
           <div class="qa-icon"><i class="fa-solid fa-calendar-plus"></i></div>
           <span>Book Appointment</span>
@@ -842,9 +1370,204 @@
         <div class="qa-btn qa-ai" onclick="switchPatView('aiAssistant')">
           <div class="qa-icon"><i class="fa-solid fa-robot"></i></div>
           <span>Ask AI Doctor</span>
+
         </div>
+
       </div>
     </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════ APPOINTMENTS SECTION ═══════════════ -->
+<div class="section-view" id="appointmentsView">
+
+  <!-- Topbar -->
+  <div class="appt-topbar">
+    <div class="appt-topbar-left">
+      <div class="appt-topbar-icon"><i class="fa-solid fa-calendar-check"></i></div>
+      <div class="appt-topbar-text">
+        <h2>Appointments</h2>
+        <p>Manage your upcoming &amp; past appointments</p>
+      </div>
+    </div>
+    <div class="appt-topbar-right">
+      <div class="tb-btn" title="Notifications">
+        <i class="fa-solid fa-bell"></i>
+        <div class="tb-badge">2</div>
+      </div>
+      <div class="tb-sos" title="Emergency SOS" onclick="showView(5)">
+        <i class="fa-solid fa-truck-medical"></i>
+      </div>
+      <div class="tb-av">JD</div>
+    </div>
+  </div>
+
+  <!-- Scrollable content -->
+  <div class="appt-scroll">
+    <div class="appt-container">
+      <div class="appt-grid">
+
+        <!-- LEFT: Your Appointments -->
+        <div class="appt-panel">
+          <div class="appt-panel-head">
+            <span class="appt-panel-title">
+              <i class="fa-solid fa-list-check" style="color:var(--accent2)"></i>
+              Your Appointments
+            </span>
+            <span class="appt-count-badge" id="apptCount"></span>
+          </div>
+          <div class="appt-list" id="apptList">
+            <div class="appt-item">
+              <div class="appt-ico virtual"><i class="fa-solid fa-video"></i></div>
+              <div class="appt-info">
+                <div class="appt-doc">Dr. Priya Sharma &mdash; Cardiologist</div>
+                <div class="appt-meta"><i class="fa-regular fa-calendar"></i> 10 Apr 2025 <span class="sep">&bull;</span> 10:30 AM</div>
+              </div>
+              <span class="appt-badge badge-virtual">Virtual</span>
+            </div>
+            <div class="appt-item">
+              <div class="appt-ico inperson"><i class="fa-solid fa-hospital"></i></div>
+              <div class="appt-info">
+                <div class="appt-doc">Dr. Rajan Mehta &mdash; Endocrinologist</div>
+                <div class="appt-meta"><i class="fa-regular fa-calendar"></i> 14 Apr 2025 <span class="sep">&bull;</span> 2:00 PM</div>
+              </div>
+              <span class="appt-badge badge-inperson">In-Person</span>
+            </div>
+            <div class="appt-item">
+              <div class="appt-ico virtual"><i class="fa-solid fa-video"></i></div>
+              <div class="appt-info">
+                <div class="appt-doc">Dr. Ananya Reddy &mdash; General Physician</div>
+                <div class="appt-meta"><i class="fa-regular fa-calendar"></i> 28 Mar 2025 <span class="sep">&bull;</span> 9:00 AM</div>
+              </div>
+              <span class="appt-badge badge-done">Completed</span>
+            </div>
+          </div>
+        </div><!-- /left panel -->
+
+        <!-- RIGHT: Book New Appointment -->
+        <div class="appt-panel">
+          <div class="appt-panel-head">
+            <span class="appt-panel-title">
+              <i class="fa-solid fa-calendar-plus" style="color:var(--accent)"></i>
+              Book New Appointment
+            </span>
+          </div>
+          <div class="book-form" id="bookForm">
+            <div class="form-group">
+              <span class="form-label">Appointment Type</span>
+              <div class="type-toggle">
+                <button class="type-btn virtual selected" id="typeVirtual" onclick="selectType('virtual')">
+                  <i class="fa-solid fa-video"></i> Virtual
+                </button>
+                <button class="type-btn inperson" id="typeInPerson" onclick="selectType('inperson')">
+                  <i class="fa-solid fa-hospital"></i> In-Person
+                </button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="apptSpecialty">Specialty</label>
+              <select class="form-select" id="apptSpecialty">
+                <option value="">-- Select Specialty --</option>
+                <option>General Physician</option>
+                <option>Cardiologist</option>
+                <option>Endocrinologist</option>
+                <option>Neurologist</option>
+                <option>Dermatologist</option>
+                <option>Orthopedic</option>
+                <option>Ophthalmologist</option>
+                <option>Psychiatrist</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="apptDoctor">Preferred Doctor (optional)</label>
+              <input class="form-input" id="apptDoctor" type="text" placeholder="e.g. Dr. Priya Sharma" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="apptDate">Date</label>
+              <input class="form-input" id="apptDate" type="date" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="apptTime">Preferred Time</label>
+              <select class="form-select" id="apptTime">
+                <option value="">-- Select Time Slot --</option>
+                <option>9:00 AM</option><option>10:00 AM</option>
+                <option>10:30 AM</option><option>11:00 AM</option>
+                <option>12:00 PM</option><option>2:00 PM</option>
+                <option>3:00 PM</option><option>4:00 PM</option><option>5:00 PM</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="apptNote">Reason / Notes (optional)</label>
+              <input class="form-input" id="apptNote" type="text" placeholder="e.g. Follow-up for blood sugar" />
+            </div>
+            <button class="book-btn" id="confirmBookBtn" onclick="bookAppointment()">
+              <i class="fa-solid fa-calendar-check"></i> Confirm Booking
+            </button>
+          </div>
+        </div><!-- /right panel -->
+
+      </div><!-- /appt-grid -->
+    </div><!-- /appt-container -->
+  </div><!-- /appt-scroll -->
+</div><!-- /appointmentsView -->
+</div><!-- /main -->
+
+<!-- ═══════════════ EMERGENCY SOS VIEW ═══════════════ -->
+<div class="sos-view" id="sosView">
+
+  <!-- Top bar -->
+  <div class="sos-topbar">
+    <div class="sos-topbar-title" onclick="showView(prevIdx)" title="Back to Dashboard">
+      <i class="fa-solid fa-circle-exclamation"></i>
+      Emergency SOS
+      <span class="sos-back-hint">← click to go back</span>
+    </div>
+    <div class="sos-topbar-right">
+      <div class="tb-btn" title="Notifications">
+        <i class="fa-solid fa-bell"></i>
+        <div class="tb-badge">2</div>
+      </div>
+      <div class="tb-av">JD</div>
+    </div>
+  </div>
+
+  <!-- Body -->
+  <div class="sos-body">
+
+    <!-- Pulsing SOS button -->
+    <div class="sos-ring-wrap">
+      <button class="sos-big-btn" id="bigSosBtn" onclick="triggerSOS()">
+        <i class="fa-solid fa-phone"></i>
+        <span class="sos-label">SOS</span>
+        <span class="sos-sub">Tap for Emergency</span>
+      </button>
+    </div>
+
+    <!-- Description -->
+    <p class="sos-desc">
+      Press the SOS button to instantly alert <strong>nearby hospitals</strong>
+      and <strong>emergency contacts</strong>.
+    </p>
+
+    <!-- Action cards -->
+    <div class="sos-actions">
+      <div class="sos-card" id="callAmbulanceCard" onclick="callAmbulance()">
+        <i class="fa-solid fa-truck-medical"></i>
+        <div class="sos-card-name">Call Ambulance</div>
+        <div class="sos-card-sub">108</div>
+      </div>
+      <div class="sos-card" id="alertFamilyCard" onclick="alertFamily()">
+        <i class="fa-solid fa-people-arrows"></i>
+        <div class="sos-card-name">Alert Family</div>
+        <div class="sos-card-sub">3 contacts</div>
+      </div>
+    </div>
+
+  </div><!-- /sos-body -->
+</div><!-- /sosView -->
+
+<!-- ═══════════════ SOS MODAL ═══════════════ -->
 
   </div><!-- /dash-scroll -->
   </div><!-- /viewDashboard -->
@@ -1128,6 +1851,7 @@
 </div><!-- /main -->
 
 <!--  SOS MODAL  -->
+
 <div class="overlay" id="sosModal">
   <div class="modal-box">
     <div class="modal-ico"><i class="fa-solid fa-truck-medical"></i></div>
@@ -1204,6 +1928,154 @@
     }
   };
 
+
+  /* Individual sub-scores (out of 100 each) */
+  function bpScore(s, d) {
+    if (s <= 120 && d <= 80)   return 100;
+    if (s <= 130 && d <= 80)   return 75;
+    if (s <= 140 || d <= 90)   return 50;
+    return 25;
+  }
+  function sugarScore(v) {
+    if (v < 100)  return 100;
+    if (v < 126)  return 65;   // pre-diabetic
+    return 30;                 // diabetic range
+  }
+  function hemoScore(v) {
+    // Male ref 13.5–17.5
+    if (v >= 13.5 && v <= 17.5) return 100;
+    if (v >= 12.0 && v < 13.5)  return 60;
+    return 30;
+  }
+
+  const bpS  = bpScore(vitals.bp.sys, vitals.bp.dia);
+  const sgS  = sugarScore(vitals.sugar.val);
+  const hbS  = hemoScore(vitals.hemo.val);
+  const SCORE = Math.round((bpS + sgS + hbS) / 3);
+
+  /* ── Animate ring ─────────────────────── */
+  const circumf = 2 * Math.PI * 65; // r=65
+  const ring    = document.getElementById('ringFill');
+  const numEl   = document.getElementById('scoreNum');
+  ring.style.strokeDasharray  = circumf;
+  ring.style.strokeDashoffset = circumf;
+
+  setTimeout(() => {
+    ring.style.strokeDashoffset = circumf - (SCORE / 100) * circumf;
+  }, 150);
+  let n = 0;
+  const counter = setInterval(() => {
+    n = Math.min(n + 2, SCORE);
+    numEl.textContent = n;
+    if (n >= SCORE) clearInterval(counter);
+  }, 22);
+
+  /* ── Risk Pill ────────────────────────── */
+  const pill  = document.getElementById('riskPill');
+  const label = document.getElementById('riskLabel');
+  if (SCORE >= 80)      { pill.className = 'risk-pill pill-low';  label.textContent = 'Low Risk'; }
+  else if (SCORE >= 60) { pill.className = 'risk-pill pill-mod';  label.textContent = 'Moderate Risk'; }
+  else                  { pill.className = 'risk-pill pill-high'; label.textContent = 'High Risk'; }
+
+  /* ── Breakdown bars ───────────────────── */
+  setTimeout(() => {
+    document.getElementById('bp-bar').style.width = bpS + '%';
+    document.getElementById('sg-bar').style.width = sgS + '%';
+    document.getElementById('hb-bar').style.width = hbS + '%';
+    document.getElementById('bp-sc').textContent = bpS;
+    document.getElementById('sg-sc').textContent = sgS;
+    document.getElementById('hb-sc').textContent = hbS;
+  }, 400);
+
+  /* ── Sidebar nav & section switching ── */
+  const mainEl   = document.getElementById('mainContainer');
+  const apptView = document.getElementById('appointmentsView');
+  const famView  = document.getElementById('familyConnectView');
+  const sosView  = document.getElementById('sosView');
+  let prevIdx = 0; // track where to return from SOS
+
+  function showView(idx) {
+    mainEl.style.display   = (idx === 0) ? 'flex' : 'none';
+    apptView.classList.toggle('active', idx === 1);
+    famView.classList.toggle('active',  idx === 3);
+    sosView.classList.toggle('active',  idx === 5);
+    
+    if (idx === 1) updateApptCount();
+    if (idx === 3) renderFamilyConnect();
+    if (idx !== 5) prevIdx = idx; // remember non-SOS view
+  }
+
+  /* ── Family Connect Data Rendering ── */
+  function renderFamilyConnect() {
+    // 1. Reports
+    const reports = JSON.parse(localStorage.getItem('hospitalReports')) || [
+      { name: 'Blood Work - CBC', date: '02 Apr 2025', type: 'Clinical' },
+      { name: 'ECG Report', date: '28 Mar 2025', type: 'Cardiology' }
+    ];
+    const repList = document.getElementById('famReportsList');
+    repList.innerHTML = reports.map(r => `
+      <div class="fam-item">
+        <i class="fa-solid fa-file-waveform fi-blue"></i>
+        <div class="item-main">
+          <div class="item-name">${r.name}</div>
+          <div class="item-sub">${r.date} &bull; ${r.type}</div>
+        </div>
+      </div>
+    `).join('');
+
+    // 2. Medicines
+    const meds = JSON.parse(localStorage.getItem('hospitalMeds')) || [
+      { name: 'Amlodipine 5mg', dosage: '1-0-1', timing: 'After Food' },
+      { name: 'Metformin 500mg', dosage: '0-1-0', timing: 'With Lunch' }
+    ];
+    const medList = document.getElementById('famMedsList');
+    medList.innerHTML = meds.map(m => `
+      <div class="fam-item">
+        <i class="fa-solid fa-capsules fi-green"></i>
+        <div class="item-main">
+          <div class="item-name">${m.name}</div>
+          <div class="item-sub">${m.dosage} &bull; ${m.timing}</div>
+        </div>
+      </div>
+    `).join('');
+
+    // 3. Upcoming Appointments (from existing list)
+    const apptList = document.getElementById('famApptList');
+    const items = document.querySelectorAll('#apptList .appt-item');
+    if (items.length > 0) {
+      apptList.innerHTML = Array.from(items).slice(0, 2).map((item, i) => {
+        const doc = item.querySelector('.appt-doc').textContent;
+        const meta = item.querySelector('.appt-meta').textContent;
+        return `
+          <div class="fam-item">
+            <i class="fa-solid fa-user-doctor fi-purple"></i>
+            <div class="item-main">
+              <div class="item-name">${doc}</div>
+              <div class="item-sub">${meta}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    } else {
+      apptList.innerHTML = '<div class="empty-state">No upcoming visits</div>';
+    }
+  }
+
+  document.querySelectorAll('#sideNav li').forEach((li, idx) => {
+    li.addEventListener('click', () => {
+      document.querySelectorAll('#sideNav li').forEach(x => x.classList.remove('active'));
+      li.classList.add('active');
+      showView(idx);
+    });
+  });
+
+  /* ── Chart.js (BP / Sugar / Hemoglobin only) ── */
+  const weeks = ['Week 1','Week 2','Week 3','Week 4'];
+  const chartData = {
+    bp:    { label:'Systolic BP (mmHg)', data:[122, 119, 124, 120], color:'#6c63ff' },
+    sugar: { label:'Blood Sugar (mg/dL)', data:[102, 108, 115, 108],  color:'#f59e0b' },
+    hemo:  { label:'Hemoglobin (g/dL)',   data:[13.7, 13.9, 13.8, 13.8], color:'#00d4aa' },
+
   // Modal Handlers
   window.openSOS = () => {
     const modal = document.getElementById('sosModal');
@@ -1226,6 +2098,7 @@
   window.toggleSidebar = () => {
     const sidebar = document.getElementById('patSidebar');
     if (sidebar) sidebar.classList.toggle('collapsed');
+
   };
 </script>
 
@@ -1261,7 +2134,7 @@
     chart = new Chart(ctxEl, {
       type: 'line',
       data: {
-        labels: days,
+        labels: weeks,
         datasets: [{
           label: d.label, data: d.data,
           borderColor: d.color, backgroundColor: d.color + '18',
@@ -1286,6 +2159,123 @@
     window.buildChart(key);
   };
 
+
+  /* ── Toast ────────────────────────────── */
+  let toastTimer;
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.transform = 'translateY(0)'; t.style.opacity = '1';
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => {
+      t.style.transform = 'translateY(80px)'; t.style.opacity = '0';
+    }, 3000);
+  }
+
+  /* ── Appointments ─────────────────────── */
+  let selectedType = 'virtual';
+
+  function selectType(type) {
+    selectedType = type;
+    document.getElementById('typeVirtual').classList.toggle('selected', type === 'virtual');
+    document.getElementById('typeVirtual').classList.toggle('virtual',  type === 'virtual');
+    document.getElementById('typeInPerson').classList.toggle('selected', type === 'inperson');
+    document.getElementById('typeInPerson').classList.toggle('inperson', type === 'inperson');
+  }
+
+  function updateApptCount() {
+    const items = document.querySelectorAll('#apptList .appt-item');
+    const el = document.getElementById('apptCount');
+    if (el) el.textContent = items.length + ' appointment' + (items.length !== 1 ? 's' : '');
+  }
+
+  function bookAppointment() {
+    const specialty = document.getElementById('apptSpecialty').value;
+    const doctor    = document.getElementById('apptDoctor').value.trim();
+    const date      = document.getElementById('apptDate').value;
+    const time      = document.getElementById('apptTime').value;
+
+    if (!specialty) { toast('⚠️ Please select a specialty.'); return; }
+    if (!date)       { toast('⚠️ Please choose a date.'); return; }
+    if (!time)       { toast('⚠️ Please select a time slot.'); return; }
+
+    const docLabel = doctor || ('Doctor — ' + specialty);
+    const dateStr  = new Date(date).toLocaleDateString('en-US', { day:'numeric', month:'short', year:'numeric' });
+    const isVirtual = selectedType === 'virtual';
+
+    const item = document.createElement('div');
+    item.className = 'appt-item';
+    item.innerHTML = `
+      <div class="appt-ico ${isVirtual ? 'virtual' : 'inperson'}">
+        <i class="fa-solid ${isVirtual ? 'fa-video' : 'fa-hospital'}"></i>
+      </div>
+      <div class="appt-info">
+        <div class="appt-doc">${docLabel}</div>
+        <div class="appt-meta"><i class="fa-regular fa-calendar"></i> ${dateStr} &nbsp;·&nbsp; ${time}</div>
+      </div>
+      <span class="appt-badge ${isVirtual ? 'badge-virtual' : 'badge-inperson'}">
+        ${isVirtual ? 'Virtual' : 'In-Person'}
+      </span>
+    `;
+
+    // Prepend to top of list
+    const list = document.getElementById('apptList');
+    list.insertBefore(item, list.firstChild);
+    updateApptCount();
+
+    // Reset form
+    document.getElementById('apptSpecialty').value = '';
+    document.getElementById('apptDoctor').value    = '';
+    document.getElementById('apptDate').value      = '';
+    document.getElementById('apptTime').value      = '';
+    document.getElementById('apptNote').value      = '';
+    selectType('virtual');
+
+    toast('✅ Appointment booked successfully!');
+  }
+
+  // Set today as minimum date for booking
+  document.getElementById('apptDate').min = new Date().toISOString().split('T')[0];
+  updateApptCount();
+
+  /* ── Emergency SOS actions ────────────────────── */
+  function triggerSOS() {
+    const btn = document.getElementById('bigSosBtn');
+    btn.style.background = '#c0392b';
+    btn.style.boxShadow  = '0 0 0 20px rgba(231,76,60,0.25), 0 12px 50px rgba(231,76,60,0.8)';
+    setTimeout(() => {
+      btn.style.background = '#e74c3c';
+      btn.style.boxShadow  = '';
+    }, 600);
+    // Alert both
+    callAmbulance();
+    setTimeout(alertFamily, 300);
+    toast('🚨 SOS sent! Emergency services & family have been alerted.');
+  }
+
+  function flashCard(id) {
+    const card = document.getElementById(id);
+    card.style.background     = '#e8fdf5';
+    card.style.borderColor    = '#2ecc71';
+    card.querySelector('i').style.color = '#2ecc71';
+    setTimeout(() => {
+      card.style.background   = '';
+      card.style.borderColor  = '';
+      card.querySelector('i').style.color = '';
+    }, 1800);
+  }
+
+  function callAmbulance() {
+    flashCard('callAmbulanceCard');
+    toast('🚑 Calling Ambulance — 108');
+    // On real device: window.location.href = 'tel:108';
+  }
+
+  function alertFamily() {
+    flashCard('alertFamilyCard');
+    toast('📲 Alert sent to 3 family contacts.');
+  }
+
   /*  Initialization  */
   document.addEventListener('DOMContentLoaded', async () => {
     updateDates();
@@ -1299,6 +2289,7 @@
         });
     }
   });
+
 </script>
 </body>
 </html>

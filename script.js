@@ -382,6 +382,14 @@ const app = {
     },
 
     // --- HOSPITAL DASHBOARD ---
+
+    switchHospitalTab: function(tabId) {
+        // Update nav styling
+        const navItems = document.querySelectorAll('#view-hospital-dashboard .sidebar-nav li');
+        navItems.forEach(item => item.classList.remove('active'));
+        // Find by simple iteration or event logic (event logic is simple via click usually but here we hardcode mapping)
+        event.currentTarget.classList.add('active');
+
     toggleSidebar: function() {
         const sidebar = document.getElementById('hospitalSidebar');
         if (sidebar) {
@@ -397,6 +405,7 @@ const app = {
             event.currentTarget.classList.add('active');
         }
 
+
         // Hide all tabs
         document.querySelectorAll('#view-hospital-dashboard .tab-content').forEach(el => {
             el.classList.add('hidden');
@@ -404,6 +413,35 @@ const app = {
 
         // Show active
         document.getElementById(`hosp-tab-${tabId}`).classList.remove('hidden');
+
+    },
+
+    renderPatients: function() {
+        const tbody = document.getElementById('patientTableBody');
+        if (!tbody) return;
+        
+        tbody.innerHTML = '';
+        const patients = this.getPatients();
+        
+        if (patients.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;">No patients registered</td></tr>`;
+            return;
+        }
+
+        patients.forEach(p => {
+            const statusClass = p.status === 'Stable' ? 'stable' : 'critical';
+            const row = `
+                <tr>
+                    <td><strong>${p.id}</strong></td>
+                    <td>${p.name}</td>
+                    <td>${p.age} / ${p.gender.charAt(0)}</td>
+                    <td>${p.condition}</td>
+                    <td><span class="status ${statusClass}">${p.status}</span></td>
+                    <td><button class="btn-outline-sm">View details</button></td>
+                </tr>
+            `;
+            tbody.innerHTML += row;
+
 
         // Render doctor cards when that tab opens
         if (tabId === 'doctors') {
@@ -594,8 +632,11 @@ const app = {
             
             // Trigger entrance animation
             setTimeout(() => card.classList.add('active'), idx * 50);
+
         });
 
+    addPatient: function() {
+=======
         // Auto-select first patient if none selected
         if (!this.selectedPatientId && filtered.length > 0) {
             this.selectPatient(filtered[0].id);
@@ -1008,16 +1049,21 @@ const app = {
     },
 
     addPatient: async function() {
+
         const name = document.getElementById('apName').value;
         const age = document.getElementById('apAge').value;
         const gender = document.getElementById('apGender').value;
         const condition = document.getElementById('apCondition').value;
+
+        
+
         const bloodGroup = document.getElementById('apBloodGroup').value;
         const phone = document.getElementById('apPhone').value;
         const email = document.getElementById('apEmail').value || 'N/A';
         const address = document.getElementById('apAddress').value;
         const reportInput = document.getElementById('apMedicalReport');
         const reportFile = reportInput ? reportInput.files[0] : null;
+
 
         // simple validation
         if(!name || !age || !gender || !condition || !phone || !address) {
@@ -1037,6 +1083,12 @@ const app = {
             age: parseInt(age),
             gender: gender,
             condition: condition,
+
+            status: 'Stable' // default
+        });
+
+        this.savePatients(patients);
+
             status: 'stable',
             lastVisit: now.toISOString().split('T')[0],
             nextAppt: 'Pending',
@@ -1056,6 +1108,7 @@ const app = {
                 }
             ]
         };
+
 
         await this.savePatient(newPatient);
         
@@ -1160,20 +1213,6 @@ const app = {
         if (typeof lucide !== 'undefined') {
             lucide.createIcons();
         }
-
-        // Sidebar responsive auto-collapse
-        const handleResize = () => {
-            const sidebar = document.getElementById('hospitalSidebar');
-            if (sidebar) {
-                if (window.innerWidth < 1024) {
-                    sidebar.classList.add('collapsed');
-                } else {
-                    sidebar.classList.remove('collapsed');
-                }
-            }
-        };
-        window.addEventListener('resize', handleResize);
-        setTimeout(handleResize, 50); // initial check
 
         this.initSmoothScroll();
     },
