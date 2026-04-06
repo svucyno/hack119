@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Patient Dashboard – HealthNexus</title>
-  <meta name="description" content="HealthNexus patient dashboard — monitor BP, Blood Sugar and Hemoglobin in real time." />
+  <title>Patient Dashboard  HealthNexus</title>
+  <meta name="description" content="HealthNexus patient dashboard  monitor BP, Blood Sugar and Hemoglobin in real time." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    /* ── RESET ── */
+    /*  RESET  */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
       --bg:         #0b0f1a;
@@ -41,9 +41,9 @@
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
 
-    /* ── SIDEBAR ── */
+    /*  SIDEBAR  */
     .sidebar {
-      width: var(--sidebar-w);
+      width: 260px;
       min-height: 100vh;
       background: var(--bg2);
       border-right: 1px solid var(--border);
@@ -52,11 +52,26 @@
       padding: 24px 0;
       flex-shrink: 0;
       z-index: 10;
+      transition: width 0.3s var(--ease);
+      overflow: hidden;
     }
+    .sidebar.collapsed { width: 80px; }
     .sb-logo {
-      display: flex; align-items: center; gap: 10px;
-      padding: 0 20px 28px;
-      font-size: 1.1rem; font-weight: 700;
+      display: flex; align-items: center; gap: 12px;
+      padding: 0 16px 28px 20px;
+      font-size: 1rem; font-weight: 700;
+      white-space: nowrap;
+    }
+    .sidebar.collapsed .sb-logo span,
+    .sidebar.collapsed .sb-logo .logo-icon { 
+      display: none; 
+    }
+    .sidebar.collapsed .sb-logo {
+      justify-content: center;
+      padding: 0 0 28px;
+    }
+    .sidebar.collapsed .sb-toggle {
+      margin-left: 0;
     }
     .sb-logo .logo-icon {
       width: 36px; height: 36px;
@@ -93,6 +108,23 @@
       border-radius: 99px;
     }
     .sb-nav li .ni { width: 18px; text-align: center; }
+    .sidebar.collapsed .sb-nav li span:not(.ni),
+    .sidebar.collapsed .sb-label,
+    .sidebar.collapsed .sb-user-name,
+    .sidebar.collapsed .sb-user-role { 
+      display: none; 
+    }
+    .sidebar.collapsed .sb-nav li { justify-content: center; padding: 10px 0; margin: 4px 12px; }
+    .sb-toggle {
+      width: 38px; height: 38px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--muted);
+      border-radius: 10px; transition: all var(--ease);
+      margin-left: 12px;
+      flex-shrink: 0;
+    }
+    .sb-toggle:hover { background: var(--glass); color: var(--text); }
+
     .sb-divider { height: 1px; background: var(--border); margin: 12px 20px; }
     .sb-footer { padding: 16px 20px 0; margin-top: auto; }
     .sb-user {
@@ -101,6 +133,7 @@
       background: var(--glass); border: 1px solid var(--border);
       cursor: pointer; transition: all var(--ease);
     }
+    .sidebar.collapsed .sb-user { justify-content: center; padding: 10px 0; }
     .sb-user:hover { background: rgba(255,255,255,0.07); }
     .sb-user-av {
       width: 34px; height: 34px; border-radius: 50%;
@@ -111,10 +144,10 @@
     .sb-user-name  { font-size: 0.8rem; font-weight: 600; }
     .sb-user-role  { font-size: 0.67rem; color: var(--muted); }
 
-    /* ── MAIN ── */
+    /*  MAIN  */
     .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 
-    /* ── TOPBAR ── */
+    /*  TOPBAR  */
     .topbar {
       display: flex; align-items: center; justify-content: space-between;
       padding: 16px 28px;
@@ -148,14 +181,19 @@
       cursor: pointer; border: 2px solid var(--accent);
     }
 
-    /* ── SCROLL AREA ── */
+    /*  SCROLL AREA  */
     .dash-scroll {
       flex: 1; overflow-y: auto;
       padding: 24px 28px;
       display: flex; flex-direction: column; gap: 20px;
+      animation: view-in 0.4s ease-out;
+    }
+    @keyframes view-in {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* ── CARD ── */
+    /*  CARD  */
     .card {
       background: var(--glass);
       border: 1px solid var(--border);
@@ -178,14 +216,14 @@
       color: var(--muted);
     }
 
-    /* ── LAYOUT HELPERS ── */
+    /*  LAYOUT HELPERS  */
     .row  { display: flex; gap: 20px; }
     .col  { flex: 1; min-width: 0; }
     .g3   { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
 
-    /* ═══════════════════════════════════════
+    /* 
        A. HEALTH SCORE RING
-    ═══════════════════════════════════════ */
+     */
     .score-wrap {
       display: flex; align-items: center; gap: 32px;
       padding: 22px 24px 26px;
@@ -226,9 +264,9 @@
     .sb-bar-fill { height: 100%; border-radius: 99px; transition: width 1.2s ease; }
     .sb-score { width: 30px; text-align: right; font-weight: 600; }
 
-    /* ═══════════════════════════════════════
+    /* 
        B. STAT CARDS
-    ═══════════════════════════════════════ */
+     */
     .stat-card { padding: 20px; display: flex; flex-direction: column; gap: 10px; }
     .stat-top  { display: flex; align-items: center; justify-content: space-between; }
     .stat-icon {
@@ -252,9 +290,9 @@
     .mini-bar  { height: 4px; border-radius: 99px; background: rgba(255,255,255,0.07); overflow: hidden; }
     .mini-fill { height: 100%; border-radius: 99px; transition: width 1s ease; }
 
-    /* ═══════════════════════════════════════
+    /* 
        C. GRAPH
-    ═══════════════════════════════════════ */
+     */
     .graph-inner { padding: 12px 20px 20px; }
     .gtab-row    { display: flex; gap: 8px; margin-bottom: 14px; }
     .gtab {
@@ -267,9 +305,9 @@
     .gtab.active, .gtab:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
     canvas#vitalChart { max-height: 210px; }
 
-    /* ═══════════════════════════════════════
+    /* 
        D. ALERTS
-    ═══════════════════════════════════════ */
+     */
     .alert-list { display: flex; flex-direction: column; gap: 10px; padding: 12px 20px 20px; }
     .alert-item {
       display: flex; align-items: flex-start; gap: 12px;
@@ -292,9 +330,9 @@
     }
     .alert-item strong { display: block; font-weight: 600; font-size: 0.82rem; }
 
-    /* ═══════════════════════════════════════
+    /* 
        D. AI INSIGHT
-    ═══════════════════════════════════════ */
+     */
     .insight-inner { padding: 14px 20px 20px; display: flex; flex-direction: column; gap: 12px; }
     .ai-chip {
       display: inline-flex; align-items: center; gap: 6px;
@@ -314,9 +352,9 @@
     .tag-g { background: rgba(0,212,170,0.12);  color: var(--accent2); }
     .tag-b { background: rgba(56,189,248,0.12); color: var(--info); }
 
-    /* ═══════════════════════════════════════
+    /* 
        E. HEALTH STORY
-    ═══════════════════════════════════════ */
+     */
     .story-inner { padding: 12px 20px 22px; }
     .story-text  { font-size: 0.88rem; line-height: 1.8; color: #a9b8cc; }
     .story-text mark {
@@ -324,9 +362,9 @@
       color: var(--text); padding: 1px 5px; border-radius: 4px;
     }
 
-    /* ═══════════════════════════════════════
+    /* 
        F. QUICK ACTIONS
-    ═══════════════════════════════════════ */
+     */
     .qa-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; padding: 12px 20px 20px; }
     .qa-btn {
       display: flex; flex-direction: column;
@@ -348,7 +386,7 @@
       50%      { box-shadow: 0 0 0 10px rgba(255,77,109,0); }
     }
 
-    /* ── MODAL ── */
+    /*  MODAL  */
     .overlay {
       position: fixed; inset: 0;
       background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
@@ -379,6 +417,7 @@
     .mbtn-cancel  { background: var(--glass); color: var(--text); border: 1px solid var(--border); }
     .mbtn-cancel:hover { background: rgba(255,255,255,0.09); }
 
+
     /* ── LOGOUT BUTTON ── */
     .sb-logout {
       display: flex; align-items: center; gap: 10px;
@@ -392,6 +431,9 @@
     .sb-logout .ni { width: 18px; text-align: center; }
 
     /* ── TOAST ── */
+
+    /*  TOAST  */
+
     #toast {
       position: fixed; bottom: 26px; right: 26px;
       background: var(--bg2); border: 1px solid var(--border);
@@ -402,6 +444,7 @@
       transition: all 0.35s cubic-bezier(.4,0,.2,1);
       z-index: 1000; backdrop-filter: blur(12px);
     }
+
 
     /* ══════════════════════════════════════════
        APPOINTMENTS SECTION — full redesign
@@ -753,6 +796,9 @@
       .fam-grid { grid-template-columns: 1fr; }
       .appt-scroll { padding: 24px 20px; }
     }
+
+    /*  RESPONSIVE  */
+
     @media (max-width: 900px) {
       .g3  { grid-template-columns: repeat(2,1fr); }
       .row { flex-direction: column; }
@@ -768,36 +814,100 @@
       .appt-scroll { padding: 16px 10px; }
       .sos-actions { flex-direction: column; align-items: center; }
     }
+    /*  VIEW SWITCH  */
+    .dash-view { display: none; height: 100%; width: 100%; overflow: hidden; }
+    .dash-view.active-view { display: flex; flex-direction: column; }
+
+    /*  APPOINTMENTS PAGE  */
+    .appt-page { max-width: 1000px; }
+    .appt-page-title {
+      font-size: 1.6rem; font-weight: 700; color: #fff;
+      margin-bottom: 28px;
+    }
+    .appt-section-label {
+      font-size: 1.15rem; font-weight: 600; color: #fff;
+      margin: 32px 0 16px;
+    }
+    .appt-list { display: flex; flex-direction: column; gap: 12px; }
+    .appt-card {
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 14px; padding: 18px 24px;
+      transition: all var(--ease);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    .appt-card:hover {
+      border-color: rgba(108,99,255,0.3);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.25);
+    }
+    .appt-left { display: flex; align-items: center; gap: 18px; }
+    .appt-icon {
+      width: 52px; height: 52px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; flex-shrink: 0; color: #fff;
+    }
+    .appt-icon.in-person { background: #14b8a6; }
+    .appt-icon.virtual    { background: #0ea5e9; }
+    
+    .appt-doc-name { font-weight: 700; font-size: 1.05rem; color: #fff; }
+    .appt-doc-spec { font-size: 0.85rem; color: var(--muted); margin-top: 3px; }
+    
+    .appt-right { 
+      display: flex; flex-direction: column; align-items: flex-end; gap: 10px;
+    }
+    .appt-timing { text-align: right; }
+    .appt-date { font-weight: 700; font-size: 0.95rem; color: #f8fafc; }
+    .appt-time { font-size: 0.82rem; color: var(--muted); margin-top: 1px; }
+    
+    .appt-badge {
+      padding: 3px 12px; border-radius: 99px;
+      font-size: 0.72rem; font-weight: 700;
+      border: 1px solid transparent;
+    }
+    .appt-badge.in-person {
+      background: rgba(20,184,166,0.1); color: #2dd4bf;
+      border-color: rgba(20,184,166,0.3);
+    }
+    .appt-badge.virtual {
+      background: rgba(14,165,233,0.1); color: #38bdf8;
+      border-color: rgba(14,165,233,0.3);
+    }
+    .appt-empty {
+      text-align: center; padding: 40px; color: var(--muted); font-size: 0.9rem;
+    }
   </style>
+  <script src="env.js"></script>
 </head>
 <body>
 
-<!-- ═══════════════ SIDEBAR ═══════════════ -->
-<aside class="sidebar">
+<!--  SIDEBAR  -->
+<aside class="sidebar" id="patSidebar">
   <div class="sb-logo">
     <div class="logo-icon"><i class="fa-solid fa-heart-pulse"></i></div>
     <span>HealthNexus</span>
+    <div class="sb-toggle" onclick="toggleSidebar()">
+      <i class="fa-solid fa-bars"></i>
+    </div>
   </div>
-
-  <p class="sb-label">Main Menu</p>
   <ul class="sb-nav" id="sideNav">
-    <li class="active">
-      <span class="ni"><i class="fa-solid fa-house-chimney-medical"></i></span>
+    <li class="active" onclick="switchPatView('dashboard', this)">
+      <span class="ni"><i class="fa-solid fa-house-medical"></i></span>
       <span>Dashboard</span>
     </li>
-    <li>
+    <li onclick="switchPatView('appointments', this)">
       <span class="ni"><i class="fa-solid fa-calendar-check"></i></span>
       <span>Appointments</span>
     </li>
-    <li>
+    <li onclick="switchPatView('bloodDonation', this)">
       <span class="ni"><i class="fa-solid fa-hand-holding-droplet"></i></span>
       <span>Blood Donation</span>
     </li>
-    <li>
+    <li onclick="switchPatView('familyConnect', this)">
       <span class="ni"><i class="fa-solid fa-users-viewfinder"></i></span>
       <span>Family Connect</span>
     </li>
-    <li>
+    <li onclick="switchPatView('aiAssistant', this)">
       <span class="ni"><i class="fa-solid fa-robot"></i></span>
       <span>AI Assistant</span>
     </li>
@@ -806,22 +916,23 @@
   <div class="sb-divider"></div>
   <p class="sb-label">Account</p>
   <ul class="sb-nav">
-    <li>
-      <span class="ni"><i class="fa-solid fa-user-circle"></i></span>
+    <li onclick="switchPatView('profile', this)">
+      <span class="ni"><i class="fa-solid fa-circle-user"></i></span>
       <span>Profile</span>
-    </li>
-    <li>
-      <span class="ni"><i class="fa-solid fa-gear"></i></span>
-      <span>Settings</span>
     </li>
   </ul>
 
   <div class="sb-footer">
     <div class="sb-user">
-      <div class="sb-user-av">JD</div>
-      <div>
-        <div class="sb-user-name">John Doe</div>
-        <div class="sb-user-role">Patient · NEX-8241</div>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div class="sb-user-av" id="patSidebarAvatar">JD</div>
+        <div>
+          <div class="sb-user-name" id="patSidebarName">John Doe</div>
+          <div class="sb-user-role" id="patSidebarRole">Patient  NEX-8241</div>
+        </div>
+      </div>
+      <div onclick="if(window.app && app.logout){app.logout();}else{window.location.href='index.html'}" class="tb-btn" title="Logout" style="margin-left:auto; color:var(--danger); border-color:transparent;">
+        <i class="fa-solid fa-power-off"></i>
       </div>
     </div>
     <a href="index.html" class="sb-logout" id="logoutBtn" title="Logout">
@@ -831,14 +942,19 @@
   </div>
 </aside>
 
+
 <!-- ═══════════════ MAIN ═══════════════ -->
 <div class="main" id="mainContainer">
+=======
+<!--  MAIN  -->
+<div class="main">
+
 
   <!-- TOPBAR -->
   <header class="topbar">
     <div class="topbar-left">
-      <h1>Good morning, John 👋</h1>
-      <p id="topDate">Loading...</p>
+      <h1 id="patDashboardTitle">Patient Dashboard</h1>
+      <p id="patTopbarGreeting" style="font-size: 0.85rem; color: var(--muted); margin-top: 4px;">Good morning, John </p>
     </div>
     <div class="topbar-right">
       <div class="tb-btn" title="Notifications">
@@ -849,14 +965,18 @@
         <i class="fa-solid fa-truck-medical"></i>
       </div>
       <div class="tb-btn" title="Search"><i class="fa-solid fa-magnifying-glass"></i></div>
-      <div class="tb-av">JD</div>
+      <div class="tb-btn" title="Logout" onclick="if(window.app && app.logout){app.logout();}else{window.location.href='index.html'}" style="color:var(--danger); border-color:rgba(255,77,109,0.3);">
+        <i class="fa-solid fa-power-off"></i>
+      </div>
+      <div class="tb-av" id="patTopbarAvatar">JD</div>
     </div>
   </header>
 
-  <!-- SCROLLABLE DASHBOARD -->
+  <!--  VIEW: DASHBOARD  -->
+  <div class="dash-view active-view" id="viewDashboard">
   <div class="dash-scroll">
 
-    <!-- ── ROW 1: Health Score + 3 Stat Cards ── -->
+    <!--  ROW 1: Health Score + 3 Stat Cards  -->
     <div class="row">
 
       <!-- A. HEALTH SCORE -->
@@ -900,21 +1020,21 @@
                 <div class="sb-bar-bg">
                   <div class="sb-bar-fill" id="bp-bar" style="width:0%;background:linear-gradient(90deg,#6c63ff,#00d4aa)"></div>
                 </div>
-                <span class="sb-score" id="bp-sc">—</span>
+                <span class="sb-score" id="bp-sc"></span>
               </div>
               <div class="sb-row">
                 <span class="sb-label">Blood Sugar</span>
                 <div class="sb-bar-bg">
                   <div class="sb-bar-fill" id="sg-bar" style="width:0%;background:linear-gradient(90deg,#f59e0b,#f87171)"></div>
                 </div>
-                <span class="sb-score" id="sg-sc">—</span>
+                <span class="sb-score" id="sg-sc"></span>
               </div>
               <div class="sb-row">
                 <span class="sb-label">Hemoglobin</span>
                 <div class="sb-bar-bg">
                   <div class="sb-bar-fill" id="hb-bar" style="width:0%;background:linear-gradient(90deg,#00d4aa,#38bdf8)"></div>
                 </div>
-                <span class="sb-score" id="hb-sc">—</span>
+                <span class="sb-score" id="hb-sc"></span>
               </div>
             </div>
           </div>
@@ -934,7 +1054,7 @@
             <div>
               <div class="stat-val">120<span class="stat-unit">/80 mmHg</span></div>
               <div class="stat-name">Blood Pressure</div>
-              <div class="stat-ref">Normal: 90–120 / 60–80 mmHg</div>
+              <div class="stat-ref">Normal: 90120 / 6080 mmHg</div>
             </div>
             <div class="mini-bar">
               <div class="mini-fill" id="bp-mini" style="width:60%;background:linear-gradient(90deg,#6c63ff,#00d4aa)"></div>
@@ -950,7 +1070,7 @@
             <div>
               <div class="stat-val">108<span class="stat-unit">mg/dL</span></div>
               <div class="stat-name">Blood Sugar</div>
-              <div class="stat-ref">Normal fasting: 70–99 mg/dL</div>
+              <div class="stat-ref">Normal fasting: 7099 mg/dL</div>
             </div>
             <div class="mini-bar">
               <div class="mini-fill" id="sg-mini" style="width:70%;background:linear-gradient(90deg,#f59e0b,#f87171)"></div>
@@ -966,7 +1086,7 @@
             <div>
               <div class="stat-val">13.8<span class="stat-unit">g/dL</span></div>
               <div class="stat-name">Hemoglobin</div>
-              <div class="stat-ref">Normal male: 13.5–17.5 g/dL</div>
+              <div class="stat-ref">Normal male: 13.517.5 g/dL</div>
             </div>
             <div class="mini-bar">
               <div class="mini-fill" id="hb-mini" style="width:82%;background:linear-gradient(90deg,#00d4aa,#38bdf8)"></div>
@@ -977,12 +1097,16 @@
       </div>
     </div>
 
-    <!-- ── ROW 2: GRAPH ── -->
+    <!--  ROW 2: GRAPH  -->
     <div class="card">
       <div class="card-head">
         <span class="card-title">
           <i class="fa-solid fa-chart-line" style="margin-right:6px;color:var(--accent)"></i>
+
           Vital Trends — Last 4 Weeks
+
+          Vital Trends  Last 7 Days
+
         </span>
         <div class="gtab-row">
           <button class="gtab active" onclick="switchChart('bp',this)">BP (Systolic)</button>
@@ -995,7 +1119,7 @@
       </div>
     </div>
 
-    <!-- ── ROW 3: ALERTS + AI INSIGHT ── -->
+    <!--  ROW 3: ALERTS + AI INSIGHT  -->
     <div class="row">
 
       <!-- Alerts (from 3 metrics only) -->
@@ -1011,21 +1135,21 @@
           <div class="alert-item a-warn">
             <div class="adot d-warn"></div>
             <div>
-              <strong>Borderline Blood Sugar – 108 mg/dL</strong>
-              Fasting glucose is slightly above normal (≥100 mg/dL). Monitor and reduce refined sugar intake.
+              <strong>Borderline Blood Sugar  108 mg/dL</strong>
+              Fasting glucose is slightly above normal (100 mg/dL). Monitor and reduce refined sugar intake.
             </div>
           </div>
           <div class="alert-item a-info">
             <div class="adot d-info"></div>
             <div>
-              <strong>BP Stable – 120/80 mmHg</strong>
+              <strong>BP Stable  120/80 mmHg</strong>
               Blood pressure is within normal limits. Continue low-sodium diet and regular monitoring.
             </div>
           </div>
           <div class="alert-item a-info">
             <div class="adot d-info"></div>
             <div>
-              <strong>Hemoglobin within Range – 13.8 g/dL</strong>
+              <strong>Hemoglobin within Range  13.8 g/dL</strong>
               No signs of anaemia. Maintain iron-rich diet to keep levels stable.
             </div>
           </div>
@@ -1043,7 +1167,7 @@
         </div>
         <div class="insight-inner">
           <p class="insight-text">
-            Based on your three core vitals — BP, Blood Sugar, and Hemoglobin — your overall health score is
+            Based on your three core vitals  BP, Blood Sugar, and Hemoglobin  your overall health score is
             <strong style="color:var(--accent2)">78/100 (Low Risk)</strong>.
             Your blood pressure is well-controlled at 120/80 mmHg. Blood sugar at 108 mg/dL is borderline pre-diabetic
             and should be your primary focus. Hemoglobin at 13.8 g/dL is healthy.
@@ -1062,6 +1186,7 @@
 
 
 
+
   </div><!-- /dash-scroll -->
 </div><!-- /dashboard-view -->
 
@@ -1077,10 +1202,32 @@
       <div class="tb-btn" title="Notifications">
         <i class="fa-solid fa-bell"></i>
         <div class="tb-badge">2</div>
+
+    <!--  ROW 4: HEALTH STORY  -->
+    <div class="card">
+      <div class="card-head">
+        <span class="card-title">
+          <i class="fa-solid fa-book-medical" style="margin-right:6px;color:var(--accent2)"></i>
+          Your Health Story
+        </span>
+        <span style="font-size:0.72rem;color:var(--muted);">AI-generated  Updated today</span>
+      </div>
+      <div class="story-inner">
+        <p class="story-text">
+          Over the past 30 days, John's health profile has been evaluated across three key clinical markers.
+          His <mark>blood pressure remains stable at 120/80 mmHg</mark>, indicating normal cardiovascular function with no immediate concern.
+          However, his <mark>fasting blood sugar of 108 mg/dL places him in the borderline pre-diabetic category</mark> 
+          a trend that requires dietary adjustment and continued monitoring to prevent progression to Type 2 Diabetes.
+          His <mark>hemoglobin level of 13.8 g/dL is within the normal male reference range</mark> (13.517.5 g/dL),
+          confirming the absence of anaemia. The combined health risk score of <mark>78/100 reflects a Low-Risk profile</mark>,
+          but proactive management of blood sugar is strongly advised.
+        </p>
+
       </div>
       <div class="tb-av">JD</div>
     </div>
   </div>
+
 
   <div class="fam-scroll">
     <div class="fam-container">
@@ -1117,6 +1264,15 @@
           <i class="fa-solid fa-circle-check"></i>
           Overall Health: STABLE
         </div>
+
+    <!--  ROW 5: QUICK ACTIONS  -->
+    <div class="card">
+      <div class="card-head">
+        <span class="card-title">
+          <i class="fa-solid fa-bolt" style="margin-right:6px;color:var(--warn)"></i>
+          Quick Actions
+        </span>
+
       </div>
 
       <!-- Health Data Grid -->
@@ -1156,6 +1312,7 @@
             </p>
           </div>
         </div>
+
 
         <!-- Appointments -->
         <div class="fam-card">
@@ -1201,12 +1358,26 @@
               All clinical parameters are within acceptable ranges. Next major check-up in 10 days.
             </div>
           </div>
+
+        <div class="qa-btn qa-appt" onclick="switchPatView('appointments')">
+          <div class="qa-icon"><i class="fa-solid fa-calendar-plus"></i></div>
+          <span>Book Appointment</span>
+        </div>
+        <div class="qa-btn qa-med" id="medsBtn" onclick="toast('Opening Medicines...')">
+          <div class="qa-icon"><i class="fa-solid fa-pills"></i></div>
+          <span>My Medicines</span>
+        </div>
+        <div class="qa-btn qa-ai" onclick="switchPatView('aiAssistant')">
+          <div class="qa-icon"><i class="fa-solid fa-robot"></i></div>
+          <span>Ask AI Doctor</span>
+
         </div>
 
       </div>
     </div>
   </div>
 </div>
+
 
 <!-- ═══════════════ APPOINTMENTS SECTION ═══════════════ -->
 <div class="section-view" id="appointmentsView">
@@ -1397,6 +1568,290 @@
 </div><!-- /sosView -->
 
 <!-- ═══════════════ SOS MODAL ═══════════════ -->
+
+  </div><!-- /dash-scroll -->
+  </div><!-- /viewDashboard -->
+
+  <!--  VIEW: APPOINTMENTS  -->
+  <div class="dash-view" id="viewAppointments">
+    <div class="dash-scroll">
+    <div class="appt-page">
+      <div class="appt-page-title">Appointments</div>
+
+      <div class="appt-section-label">Upcoming Appointments</div>
+      <div class="appt-list">
+
+        <!-- Dr. Ananya Gupta -->
+        <div class="appt-card">
+          <div class="appt-left">
+            <div class="appt-icon in-person"><i class="fa-solid fa-calendar-days"></i></div>
+            <div class="appt-info">
+              <div class="appt-doc-name">Dr. Ananya Gupta</div>
+              <div class="appt-doc-spec">Endocrinologist</div>
+            </div>
+          </div>
+          <div class="appt-right">
+            <div class="appt-timing">
+              <div class="appt-date">Apr 10, 2026</div>
+              <div class="appt-time">10:00 AM</div>
+            </div>
+            <div class="appt-badge in-person">In-Person</div>
+          </div>
+        </div>
+
+        <!-- Dr. Vikash Mehta -->
+        <div class="appt-card">
+          <div class="appt-left">
+            <div class="appt-icon virtual"><i class="fa-solid fa-video"></i></div>
+            <div class="appt-info">
+              <div class="appt-doc-name">Dr. Vikash Mehta</div>
+              <div class="appt-doc-spec">Cardiologist</div>
+            </div>
+          </div>
+          <div class="appt-right">
+            <div class="appt-timing">
+              <div class="appt-date">Apr 15, 2026</div>
+              <div class="appt-time">2:30 PM</div>
+            </div>
+            <div class="appt-badge virtual">Virtual</div>
+          </div>
+        </div>
+
+        <!-- Dr. Sunita Rao -->
+        <div class="appt-card">
+          <div class="appt-left">
+            <div class="appt-icon in-person"><i class="fa-solid fa-calendar-days"></i></div>
+            <div class="appt-info">
+              <div class="appt-doc-name">Dr. Sunita Rao</div>
+              <div class="appt-doc-spec">General Physician</div>
+            </div>
+          </div>
+          <div class="appt-right">
+            <div class="appt-timing">
+              <div class="appt-date">Apr 22, 2026</div>
+              <div class="appt-time">11:00 AM</div>
+            </div>
+            <div class="appt-badge in-person">In-Person</div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="appt-section-label">Past Appointments</div>
+      <div class="appt-list" style="opacity:0.6;">
+        <!-- Example Past -->
+        <div class="appt-card">
+          <div class="appt-left">
+            <div class="appt-icon virtual"><i class="fa-solid fa-video"></i></div>
+            <div class="appt-info">
+              <div class="appt-doc-name">Dr. Ravi Kumar</div>
+              <div class="appt-doc-spec">Dermatologist</div>
+            </div>
+          </div>
+          <div class="appt-right">
+            <div class="appt-timing">
+              <div class="appt-date">Mar 28, 2026</div>
+              <div class="appt-time">3:00 PM</div>
+            </div>
+            <div class="appt-badge virtual" style="opacity:0.7;">Completed</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div><!-- /viewAppointments -->
+
+  <!--  VIEW: BLOOD DONATION  -->
+  <div class="dash-view" id="viewBloodDonation">
+    <div class="dash-scroll">
+    <div class="appt-page">
+      <div class="appt-page-title">Blood Donation Center</div>
+      
+      <div class="row">
+        <!-- 1. Donor Search -->
+        <div class="card col">
+          <div class="card-head"><span class="card-title">Find Nearby Donors</span></div>
+          <div style="padding: 20px; display:flex; gap:10px;">
+            <input type="text" placeholder="Enter Blood Group (e.g., O+)" style="flex:1; background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:10px; color:#fff;">
+            <button class="qa-btn" style="padding:10px 20px; min-width:100px;">Search</button>
+          </div>
+          <div class="alert-list">
+            <div class="alert-item a-info"><div class="adot d-info"></div><span><strong>O+ Donors available</strong> in your current locality (2km radius).</span></div>
+          </div>
+        </div>
+
+        <!-- 2. Register -->
+        <div class="card" style="width:300px;">
+          <div class="card-head"><span class="card-title">Become a Lifesaver</span></div>
+          <div style="padding:20px; text-align:center;">
+             <i class="fa-solid fa-hand-holding-heart" style="font-size:2.5rem; color:var(--danger); margin-bottom:15px;"></i>
+             <p style="font-size:0.82rem; color:var(--muted); line-height:1.5;">Your single donation can save up to three lives. Join our network today.</p>
+             <button class="qa-btn qa-sos" style="width:100%; margin-top:20px; padding:12px;">Register Now</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="appt-section-label">Top Donors This Month</div>
+      <div class="g3">
+        <div class="card stat-card">
+          <div class="stat-top"><div class="stat-icon ic-red">O+</div><span class="chip c-good">Available</span></div>
+          <div class="stat-name">Rajesh Kumar</div>
+          <button class="qa-btn" style="padding:6px; font-size:0.7rem; margin-top:10px;">Contact Donor</button>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-top"><div class="stat-icon ic-red">AB-</div><span class="chip c-warn">Recent</span></div>
+          <div class="stat-name">Sita Ramaswamy</div>
+          <button class="qa-btn" style="padding:6px; font-size:0.7rem; margin-top:10px;">Contact Donor</button>
+        </div>
+    </div>
+    </div>
+  </div><!-- /viewBloodDonation -->
+
+  <!-- ═══ VIEW: FAMILY CONNECT ═══ -->
+  <div class="dash-view" id="viewFamilyConnect">
+    <div class="dash-scroll">
+      <div class="appt-page">
+        <!-- New Header: Title and Add Member Button -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:32px;">
+          <div class="appt-page-title" style="margin-bottom:0;">Family Connect</div>
+          <button class="qa-btn" style="background:var(--accent2); color:var(--bg); font-weight:700; padding:10px 24px; border-radius:10px; display:flex; align-items:center; gap:8px;" onclick="app.addFamilyMember()">
+            <i class="fa-solid fa-plus"></i> Add Member
+          </button>
+        </div>
+
+        <div class="g3" style="margin-bottom:32px;">
+          <!-- Wife -->
+          <div class="card stat-card" style="padding:24px; display:flex; flex-direction:column; gap:16px; min-height:220px;">
+            <div style="width:48px; height:48px; border-radius:50%; background:rgba(0,212,170,0.1); border:1px solid var(--accent2); display:flex; align-items:center; justify-content:center; color:var(--accent2); font-size:1.2rem;">
+              <i class="fa-solid fa-user"></i>
+            </div>
+            <div>
+              <div style="font-size:1.15rem; font-weight:700; color:#fff;">Sunita Sharma</div>
+              <div style="font-size:0.85rem; color:var(--muted); margin-top:2px;">Wife</div>
+            </div>
+            <div style="display:inline-flex; align-items:center; padding:4px 12px; background:rgba(0,212,170,0.1); color:var(--accent2); border-radius:100px; font-size:0.75rem; font-weight:600; width:fit-content; border:1px solid rgba(0,212,170,0.2);">
+              Full Access
+            </div>
+            <div style="font-size:0.85rem; color:var(--muted); margin-top:auto;">+91 98765 43210</div>
+          </div>
+
+          <!-- Son -->
+          <div class="card stat-card" style="padding:24px; display:flex; flex-direction:column; gap:16px; min-height:220px;">
+            <div style="width:48px; height:48px; border-radius:50%; background:rgba(108,99,255,0.1); border:1px solid var(--accent); display:flex; align-items:center; justify-content:center; color:var(--accent); font-size:1.2rem;">
+              <i class="fa-solid fa-user-graduate"></i>
+            </div>
+            <div>
+              <div style="font-size:1.15rem; font-weight:700; color:#fff;">Arjun Sharma</div>
+              <div style="font-size:0.85rem; color:var(--muted); margin-top:2px;">Son</div>
+            </div>
+            <div style="display:inline-flex; align-items:center; padding:4px 12px; background:rgba(108,99,255,0.1); color:var(--accent); border-radius:100px; font-size:0.75rem; font-weight:600; width:fit-content; border:1px solid rgba(108,99,255,0.2);">
+              View Reports
+            </div>
+            <div style="font-size:0.85rem; color:var(--muted); margin-top:auto;">+91 98765 43211</div>
+          </div>
+
+          <!-- Brother (Doctor) -->
+          <div class="card stat-card" style="padding:24px; display:flex; flex-direction:column; gap:16px; min-height:220px;">
+            <div style="width:48px; height:48px; border-radius:50%; background:rgba(245,158,11,0.1); border:1px solid var(--warn); display:flex; align-items:center; justify-content:center; color:var(--warn); font-size:1.2rem;">
+              <i class="fa-solid fa-user-md"></i>
+            </div>
+            <div>
+              <div style="font-size:1.15rem; font-weight:700; color:#fff;">Dr. R.K. Sharma</div>
+              <div style="font-size:0.85rem; color:var(--muted); margin-top:2px;">Brother</div>
+            </div>
+            <div style="display:inline-flex; align-items:center; padding:4px 12px; background:rgba(245,158,11,0.1); color:var(--warn); border-radius:100px; font-size:0.75rem; font-weight:600; width:fit-content; border:1px solid rgba(245,158,11,0.2);">
+              Emergency Only
+            </div>
+            <div style="font-size:0.85rem; color:var(--muted); margin-top:auto;">+91 98765 43212</div>
+          </div>
+        </div>
+
+        <!-- Access Permissions Footer -->
+        <div class="card" style="padding:24px; border-left:4px solid var(--accent);">
+          <div style="font-size:1.1rem; font-weight:700; color:#fff; margin-bottom:12px;">Access Permissions</div>
+          <p style="color:var(--muted); font-size:0.9rem; line-height:1.6; max-width:800px;">
+            Family members can monitor your health records, receive emergency alerts, and view appointment schedules based on the access level you grant them. You can update these permissions at any time.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </div><!-- /viewFamilyConnect -->
+
+  <!-- ═══ VIEW: AI ASSISTANT ═══ -->
+  <div class="dash-view" id="viewAiAssistant">
+    <div class="dash-scroll">
+    <div class="appt-page">
+      <div class="appt-page-title">Nexus AI Medical Guide</div>
+      <div class="card" style="height:550px; display:flex; flex-direction:column; overflow:hidden; border-color:rgba(108,99,255,0.2);">
+        <div id="aiChatWindow" style="flex:1; overflow-y:auto; padding:24px; display:flex; flex-direction:column; gap:20px; background: rgba(0,0,0,0.1);">
+          
+          <!-- AI Msg -->
+          <div style="display:flex; gap:12px; align-self:flex-start; max-width:85%;">
+            <div style="width:32px; height:32px; border-radius:8px; background:linear-gradient(135deg, var(--accent), var(--accent2)); display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:0.8rem; color:#fff;">
+              <i class="fa-solid fa-robot"></i>
+            </div>
+            <div style="background:rgba(255,255,255,0.06); padding:14px 18px; border-radius:0 16px 16px 16px; font-size:0.9rem; line-height:1.6; border:1px solid var(--border);">
+              Hello John! I'm your Nexus Health Assistant. I've analyzed your recent vitals. How can I help you today?
+            </div>
+          </div>
+        </div>
+        <div style="padding:20px; border-top:1px solid var(--border); background:rgba(0,0,0,0.2); display:flex; gap:12px; align-items:center;">
+          <div style="flex:1; position:relative;">
+            <input type="text" id="aiChatInput" placeholder="Ask Nexus AI..." style="width:100%; background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:12px 18px; color:#fff; outline:none;" onkeypress="if(event.key === 'Enter') app.handleAiChat()">
+          </div>
+          <button class="tb-btn" id="aiSendBtn" style="background:var(--accent); border:none; color:#fff; width:44px; height:44px; border-radius:12px;" onclick="app.handleAiChat()">
+            <i class="fa-solid fa-paper-plane"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div><!-- /viewAiAssistant -->
+
+  <!-- ═══ VIEW: PROFILE ═══ -->
+  <div class="dash-view" id="viewProfile">
+    <div class="dash-scroll">
+    <div class="appt-page">
+      <div class="appt-page-title">Patient Profile</div>
+      <div class="card" style="padding:32px;">
+        <div style="display:flex; align-items:center; gap:28px; margin-bottom:32px;">
+          <div class="tb-av" style="width:100px; height:100px; font-size:2.5rem; border:4px solid var(--accent); border-radius:50%; display:flex; align-items:center; justify-content:center; background:var(--bg2);">JD</div>
+          <div>
+            <h2 id="profileName" style="font-size:1.8rem; letter-spacing:-0.5px;">Johnathan Doe</h2>
+            <p style="color:var(--muted); font-size:0.92rem;">Registered since Jan 2026 • Patient ID: NEX-8241</p>
+          </div>
+          <button class="qa-btn" style="margin-left:auto; padding:10px 20px;"><i class="fa-solid fa-pen-to-square"></i> Edit Profile</button>
+        </div>
+        
+        <div class="g3">
+          <div class="card-head" style="grid-column: span 3;"><span class="card-title">Identity & Health Overview</span></div>
+          
+          <div class="card stat-card" style="background:rgba(255,255,255,0.02); padding:20px; border-radius:12px;">
+            <span style="font-size:0.68rem; text-transform:uppercase; color:var(--muted); letter-spacing:0.5px;">Gender / Age</span>
+            <p style="font-size:1.25rem; font-weight:700; color:#fff; margin-top:8px;">Male, 28 Yrs</p>
+          </div>
+
+          <div class="card stat-card" style="background:rgba(255,255,255,0.02); padding:20px; border-radius:12px;">
+            <span style="font-size:0.68rem; text-transform:uppercase; color:var(--muted); letter-spacing:0.5px;">Blood Group</span>
+            <p style="font-size:1.25rem; font-weight:700; color:var(--danger); margin-top:8px;">O Positive (O+)</p>
+          </div>
+
+          <div class="card stat-card" style="background:rgba(255,255,255,0.02); padding:20px; border-radius:12px;">
+            <span style="font-size:0.68rem; text-transform:uppercase; color:var(--muted); letter-spacing:0.5px;">Weight / Height</span>
+            <p style="font-size:1.25rem; font-weight:700; color:#fff; margin-top:8px;">74 kg / 182 cm</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div><!-- /viewProfile -->
+
+
+</div><!-- /main -->
+
+<!--  SOS MODAL  -->
+
 <div class="overlay" id="sosModal">
   <div class="modal-box">
     <div class="modal-ico"><i class="fa-solid fa-truck-medical"></i></div>
@@ -1416,28 +1871,63 @@
 
 <div id="toast"></div>
 
-<!-- ═══════════════ SCRIPTS ═══════════════ -->
+<!-- Scripts -->
+<script src="components.js"></script>
+<script type="module" src="script.js"></script>
+<!-- Core Navigation (Standard Script for immediate global access) -->
 <script>
-  /* ── Date ─────────────────────────────── */
-  document.getElementById('topDate').textContent =
-    new Date().toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
-  document.getElementById('scoreDay').textContent =
-    new Date().toLocaleDateString('en-US', { month:'short', day:'numeric' });
+  window.switchPatView = (view, li) => {
+    // 1. Update Sidebar UI
+    const navItems = document.querySelectorAll('.sb-nav li');
+    navItems.forEach(item => item.classList.remove('active'));
+    
+    if (li) {
+      li.classList.add('active');
+    } else {
+      // Find the corresponding sidebar item if called from elsewhere
+      navItems.forEach(item => {
+        const onclickAttr = item.getAttribute('onclick') || '';
+        if (onclickAttr.includes("'" + view + "'")) {
+          item.classList.add('active');
+        }
+      });
+    }
 
-  /* ── Health Score Calculation ─────────────────────────────
-     Only 3 metrics: BP, Blood Sugar, Hemoglobin
-     Each max = 34 pts (total ≈ 100, rounding gives 78)
+    // 2. Switch View Containers
+    document.querySelectorAll('.dash-view').forEach(v => v.classList.remove('active-view'));
+    const targetId = 'view' + view.charAt(0).toUpperCase() + view.slice(1);
+    const target = document.getElementById(targetId);
+    if (target) target.classList.add('active-view');
 
-     BP      120/80 → normal → 34/34 pts
-     Sugar   108    → borderline (100-125 = 65%) → 22/34 pts
-     Hemo    13.8   → healthy → 30/34 pts
-     Total = 86 → normalized to 78 (moderate clamp for realism)
-  ─────────────────────────────────────────────────── */
-  const vitals = {
-    bp:    { sys: 120, dia: 80  },   // mmHg
-    sugar: { val: 108 },              // mg/dL fasting
-    hemo:  { val: 13.8 }             // g/dL
+    // 3. Update Topbar Title
+    const titleNode = document.getElementById('patDashboardTitle');
+    const greetingNode = document.getElementById('patTopbarGreeting');
+    
+    if (titleNode) {
+      if (view === 'dashboard') {
+        titleNode.innerText = 'Patient Dashboard';
+        if (greetingNode) {
+          const userName = localStorage.getItem('nexus_user_name') || 'User';
+          const firstName = userName.split(' ')[0];
+          const hr = new Date().getHours();
+          let gr = hr < 12 ? 'Good morning' : hr < 18 ? 'Good afternoon' : 'Good evening';
+          greetingNode.innerText = `${gr}, ${firstName} `;
+          greetingNode.style.display = 'block';
+        }
+      } else {
+        const titles = {
+          appointments: 'Appointments',
+          bloodDonation: 'Blood Donation Center',
+          familyConnect: 'Family Connect',
+          aiAssistant: 'AI Assistant',
+          profile: 'My Profile'
+        };
+        titleNode.innerText = titles[view] || (view.charAt(0).toUpperCase() + view.slice(1));
+        if (greetingNode) greetingNode.style.display = 'none';
+      }
+    }
   };
+
 
   /* Individual sub-scores (out of 100 each) */
   function bpScore(s, d) {
@@ -1585,60 +2075,90 @@
     bp:    { label:'Systolic BP (mmHg)', data:[122, 119, 124, 120], color:'#6c63ff' },
     sugar: { label:'Blood Sugar (mg/dL)', data:[102, 108, 115, 108],  color:'#f59e0b' },
     hemo:  { label:'Hemoglobin (g/dL)',   data:[13.7, 13.9, 13.8, 13.8], color:'#00d4aa' },
-  };
-  const ctxEl = document.getElementById('vitalChart').getContext('2d');
-  let chart = null;
 
-  function buildChart(key) {
+  // Modal Handlers
+  window.openSOS = () => {
+    const modal = document.getElementById('sosModal');
+    if (modal) modal.classList.add('open');
+  };
+  window.closeSOS = () => {
+    const modal = document.getElementById('sosModal');
+    if (modal) modal.classList.remove('open');
+  };
+  window.confirmSOS = () => { 
+    window.closeSOS(); 
+    const msg = ' Emergency services notified! Help is on the way.';
+    if (window.app && window.app.showToast) {
+      window.app.showToast(msg, 'success');
+    } else {
+      alert(msg);
+    }
+  };
+
+  window.toggleSidebar = () => {
+    const sidebar = document.getElementById('patSidebar');
+    if (sidebar) sidebar.classList.toggle('collapsed');
+
+  };
+</script>
+
+<!-- Module-based App Logic -->
+<script type="module">
+  import { app } from './script.js';
+  window.app = app; // Expose to window for the navigation script
+
+  /*  Date  */
+  const updateDates = () => {
+    const topDate = document.getElementById('topDate');
+    const scoreDay = document.getElementById('scoreDay');
+    if (topDate) topDate.textContent = new Date().toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+    if (scoreDay) scoreDay.textContent = new Date().toLocaleDateString('en-US', { month:'short', day:'numeric' });
+  };
+
+  /*  Chart.js Setup  */
+  let chart = null;
+  const ctxEl = document.getElementById('vitalChart')?.getContext('2d');
+  const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  
+  window.buildChart = (key) => {
+    if (!ctxEl) return;
     if (chart) chart.destroy();
-    const d = chartData[key];
+    
+    const chartDataDefaults = {
+      bp:    { label:'Systolic BP (mmHg)', data:[118,122,119,125,121,118,120], color:'#6c63ff' },
+      sugar: { label:'Blood Sugar (mg/dL)', data:[99,104,108,148,112,106,108],  color:'#f59e0b' },
+      hemo:  { label:'Hemoglobin (g/dL)',   data:[13.6,13.8,13.7,13.9,13.8,13.7,13.8], color:'#00d4aa' },
+    };
+    
+    const d = chartDataDefaults[key];
     chart = new Chart(ctxEl, {
       type: 'line',
       data: {
         labels: weeks,
         datasets: [{
           label: d.label, data: d.data,
-          borderColor: d.color,
-          backgroundColor: d.color + '18',
-          pointBackgroundColor: d.color,
-          pointBorderColor: '#0b0f1a',
-          pointBorderWidth: 2,
-          pointRadius: 5,
-          tension: 0.38, fill: true,
+          borderColor: d.color, backgroundColor: d.color + '18',
+          pointBackgroundColor: d.color, pointBorderColor: '#0b0f1a',
+          pointBorderWidth: 2, pointRadius: 5, tension: 0.38, fill: true,
         }]
       },
       options: {
         responsive: true, animation: { duration: 600 },
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            backgroundColor: '#1a2235',
-            borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1,
-            titleColor: '#e2e8f0', bodyColor: '#94a3b8', padding: 10,
-          }
-        },
+        plugins: { legend: { display: false } },
         scales: {
-          x: { grid: { color:'rgba(255,255,255,0.04)' }, ticks: { color:'#64748b', font:{ size:11 } } },
-          y: { grid: { color:'rgba(255,255,255,0.04)' }, ticks: { color:'#64748b', font:{ size:11 } } }
+          x: { grid: { color:'rgba(255,255,255,0.04)' }, ticks: { color:'#64748b' } },
+          y: { grid: { color:'rgba(255,255,255,0.04)' }, ticks: { color:'#64748b' } }
         }
       }
     });
-  }
-  buildChart('bp');
+  };
 
-  function switchChart(key, btn) {
+  window.switchChart = (key, btn) => {
     document.querySelectorAll('.gtab').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    buildChart(key);
-  }
+    window.buildChart(key);
+  };
 
-  /* ── SOS Modal ────────────────────────── */
-  function openSOS()    { document.getElementById('sosModal').classList.add('open'); }
-  function closeSOS()   { document.getElementById('sosModal').classList.remove('open'); }
-  function confirmSOS() { closeSOS(); toast('🚨 Emergency services notified! Help is on the way.'); }
-  document.getElementById('sosModal').addEventListener('click', e => {
-    if (e.target === document.getElementById('sosModal')) closeSOS();
-  });
 
   /* ── Toast ────────────────────────────── */
   let toastTimer;
@@ -1755,6 +2275,21 @@
     flashCard('alertFamilyCard');
     toast('📲 Alert sent to 3 family contacts.');
   }
+
+  /*  Initialization  */
+  document.addEventListener('DOMContentLoaded', async () => {
+    updateDates();
+    window.buildChart('bp');
+    
+    // Modal click-to-close
+    const sosModal = document.getElementById('sosModal');
+    if (sosModal) {
+        sosModal.addEventListener('click', e => {
+            if (e.target === sosModal) window.closeSOS();
+        });
+    }
+  });
+
 </script>
 </body>
 </html>
